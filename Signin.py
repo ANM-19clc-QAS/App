@@ -5,6 +5,26 @@ from tkinter import messagebox
 import json
 from numpy import size
 import tkinter as tk
+import re
+
+regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
+
+def valid_email(input):
+    if(re.search(regex_email,input) and input.isalpha):
+        btnSignup.config(state='active')  
+        return True        
+    else:
+        btnSignup.config(state='disabled')  
+        return False 
+
+def valid_name(input):
+    if(re.search(regex_name,input) and input.isalpha):
+        btnSignup.config(state='active')  
+        return True        
+    else:
+        btnSignup.config(state='disabled')  
+        return False 
 
 #data of user
 data = {}
@@ -14,6 +34,8 @@ data['user'] = []
 window = tk.Tk()
 window.geometry("500x700")
 window.title("Mã hóa")
+mailValid = window.register(valid_email)
+nameValid = window.register(valid_name)
 
 email = tk.StringVar()
 name = tk.StringVar()
@@ -35,9 +57,27 @@ def register_click():
     with open('/Users/anhquantran/Documents/GitHub/App/user.txt', 'a') as outfile:
         json.dump(data, outfile)
 
+def check_empty_email() :
+     if eEmail.get():
+         pass     #your function where you want to jump
+     else:
+        print('Input email required')
+
+def check_empty_name() :
+     if eName.get():
+         pass     #your function where you want to jump
+     else:
+        print('Input name required')
+
+def combine_funcs(*funcs):
+    def combined_func(*args, **kwargs):
+        for f in funcs:
+            f(*args, **kwargs)
+    return combined_func
+
 # Body
-lbSignin = Label(window, text="SIGN IN", font=("arial", 25))
-lbSignin.place(x=200, y=10)
+lbSignup = Label(window, text="SIGN IN", font=("arial", 25))
+lbSignup.place(x=200, y=10)
 lbEmail = Label(window, text='Email',font=('arial',15))
 lbEmail.place(x = 50,y = 100)
 lbName = Label(window, text='Name',font=('arial',15))
@@ -51,9 +91,9 @@ lbAddress.place(x = 50,y = 300)
 lbPassphase = Label(window, text='Passphase',font=('arial',15))
 lbPassphase.place(x = 50,y = 350)
 
-eEmail = Entry(window,font = ('Arial',15),textvariable=email)
+eEmail = Entry(window,font = ('Arial',15),textvariable=email,validate='focusout',validatecommand=(mailValid,'%P'))
 eEmail.place(x= 200, y= 100)
-eName = Entry(window,font = ('Arial',15),textvariable=name)
+eName = Entry(window,font = ('Arial',15),textvariable=name,validate='focusout',validatecommand=(nameValid,'%P'))
 eName.place(x= 200, y= 150)
 eDOB = Entry(window,font = ('Arial',15),textvariable=dob)
 eDOB.place(x= 200, y= 200)
@@ -64,8 +104,8 @@ eAddress.place(x= 200, y= 300)
 ePassphase = Entry(window,font = ('Arial',15),textvariable=passphase,show='*')
 ePassphase.place(x= 200, y= 350)
 
-btnSignin = Button(window, text="REGISTER",command=register_click)
-btnSignin.place(x=210, y=500)
+btnSignup = Button(window, text="REGISTER",state=DISABLED,command=combine_funcs(register_click, check_empty_email, check_empty_name))
+btnSignup.place(x=210, y=500)
 
 # Hiển thị
 window.mainloop()
