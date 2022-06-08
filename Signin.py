@@ -1,4 +1,5 @@
 from cProfile import label
+from fileinput import hook_encoded
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
@@ -7,6 +8,23 @@ import tkinter as tk
 import re
 import hashlib
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+
+
+#data of user
+users = {}
+users['user'] = []
+
+class User(object):
+    def __init__(self, email, passphase):
+        self.email = email
+        self.passphase = passphase
+
+
+def object_decoder(obj):
+    print(obj['email'] + obj['email'])
+    if 'email' in obj and 'passphase' in obj:
+        users['user'].append(User(obj['name'], obj['passphase'])) 
+
 
 def valid_email(input):
     if(re.search(regex_email,input) and input.isalpha):
@@ -21,12 +39,15 @@ def check_password(hashed_password, user_password):
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
 def checkAccount():
-   data = open('/Users/anhquantran/Documents/GitHub/App/user.txt').read() 
+
+    data_file = open('/Users/son.n/Desktop/Ngay 8_6/App/user.txt').read()
+    print(data_file)
+    data = json.loads(data_file)
+    print(data["user"])
 
 
-#data of user
-data = {}
-data['user'] = []
+
+
 
 # Tạo giao diện
 window = tk.Tk()
@@ -56,7 +77,7 @@ ePassphase = Entry(window,font = ('Arial',15),textvariable=passphase,show='*')
 ePassphase.place(x= 200, y= 150)
 
 btnSignin = Button(window, text="LOGIN",state=DISABLED,command=checkAccount)
-btnSignin.place(x=210, y=500)
+btnSignin.place(x=210, y=200)
 
 # Hiển thị
 window.mainloop()
