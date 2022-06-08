@@ -1,6 +1,7 @@
 from cProfile import label
 from fileinput import hook_encoded
 from tkinter import *
+from tkinter.font import BOLD
 from tkinter.ttk import *
 from tkinter import messagebox
 import json
@@ -35,15 +36,22 @@ def valid_email(input):
         return False 
 
 def check_password(hashed_password, user_password):
+    print(hashed_password)
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
 def checkAccount():
 
-    data_file = open('/Users/son.n/Desktop/Ngay 8_6/App/user.txt').read()
-    print(data_file)
+    data_file = open('/home/nson/Desktop/App/user.txt').read()
     data = json.loads(data_file)
-    print(data["user"])
+
+    for x in data["user"]:
+        if (x["email"] == email.get()) & check_password(x['passphase'],passphase.get()):
+            print("pass")
+        else:
+            print("failure")
+            notification.set("Not Right Password or Email")
+
 
 
 
@@ -56,12 +64,8 @@ window.title("Mã hóa")
 mailValid = window.register(valid_email)
 
 email = tk.StringVar()
-name = tk.StringVar()
-dob = tk.StringVar()
-phone = tk.StringVar()
-address = tk.StringVar()
 passphase = tk.StringVar()
-
+notification = tk.StringVar()
 
 # Body
 lbSignup = Label(window, text="SIGN IN", font=("arial", 25))
@@ -71,13 +75,16 @@ lbEmail.place(x = 50,y = 100)
 lbPassphase = Label(window, text='Passphase',font=('arial',15))
 lbPassphase.place(x = 50,y = 150)
 
+lbNotification = Label(window,font=('arial',10),textvariable=notification)
+lbNotification.place(x = 200,y = 190)
+
 eEmail = Entry(window,font = ('Arial',15),textvariable=email,validate='focusout',validatecommand=(mailValid,'%P'))
 eEmail.place(x= 200, y= 100)
 ePassphase = Entry(window,font = ('Arial',15),textvariable=passphase,show='*')
 ePassphase.place(x= 200, y= 150)
 
 btnSignin = Button(window, text="LOGIN",state=DISABLED,command=checkAccount)
-btnSignin.place(x=210, y=200)
+btnSignin.place(x=210, y=220)
 
 # Hiển thị
 window.mainloop()

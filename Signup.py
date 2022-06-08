@@ -58,7 +58,7 @@ def register_click():
         'address': address.get(),
         'passphase': hash_object.hexdigest()+':'+salt
     })
-    with open('/Users/son.n/Desktop/Ngay 8_6/App/user.txt', 'a') as outfile:
+    with open('/home/nson/Desktop/App/user.txt', 'a') as outfile:
         json.dump(data, outfile)
 
 def check_empty_email() :
