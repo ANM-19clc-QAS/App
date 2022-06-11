@@ -1,4 +1,6 @@
 from cProfile import label
+from datetime import datetime
+from time import time
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
@@ -30,7 +32,28 @@ def valid_name(input):
         btnSignup.config(state='disabled')  
         return False 
 
+def valid_phone(input):
+    if():
+        btnSignup.config(state='active')  
+        return True        
+    else:
+        btnSignup.config(state='disabled')  
+        return False 
 
+def valid_phone(input):
+    if len(input) == 10 and input.isnumeric():
+        # Entry with 10 numbers is ok
+        btnSignup.config(state='active')
+        return True
+    else:
+        # Anything else, reject it
+        btnSignup.config(state='disabled')  
+        return False
+
+def success():
+  newWin = Toplevel(root)
+  newWin.title("New page")
+  newWin.geometry("700x400")
 
 # Tạo giao diện
 window = tk.Tk()
@@ -38,6 +61,7 @@ window.geometry("500x700")
 window.title("Mã hóa")
 mailValid = window.register(valid_email)
 nameValid = window.register(valid_name)
+phoneValid = window.register(valid_phone)
 
 email = tk.StringVar()
 name = tk.StringVar()
@@ -78,6 +102,12 @@ def check_empty_name() :
      else:
         print('Input name required')
 
+def check_empty_phone() :
+     if ePhoneNumber.get():
+         pass     #your function where you want to jump
+     else:
+        print('Input phone number required')
+
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
         for f in funcs:
@@ -104,16 +134,19 @@ eEmail = Entry(window,font = ('Arial',15),textvariable=email,validate='focusout'
 eEmail.place(x= 200, y= 100)
 eName = Entry(window,font = ('Arial',15),textvariable=name,validate='focusout',validatecommand=(nameValid,'%P'))
 eName.place(x= 200, y= 150)
-eDOB = DateEntry(window,font = ('Arial',15),textvariable=dob,selectmode='day')
+eDOB = DateEntry(window,font = ('Arial',15),fieldbackground='light green',background= 'lemonchiffon', 
+                foreground= 'dark blue',textvariable=dob,selectmode='day',maxdate=datetime.today(),
+                showweeknumbers=FALSE,selectforeground='red')
 eDOB.place(x= 200, y= 200)
-ePhoneNumber = Entry(window,font = ('Arial',15),textvariable=phone)
+ePhoneNumber = Entry(window,font = ('Arial',15),textvariable=phone,validate='focusout',validatecommand=(phoneValid,'%P'))
 ePhoneNumber.place(x= 200, y= 250)
+phone_check = phone
 eAddress = Entry(window,font = ('Arial',15),textvariable=address)
 eAddress.place(x= 200, y= 300)
 ePassphase = Entry(window,font = ('Arial',15),textvariable=passphase,show='*')
 ePassphase.place(x= 200, y= 350)
 
-btnSignup = Button(window, text="REGISTER",state=DISABLED,command=combine_funcs(register_click, check_empty_email, check_empty_name))
+btnSignup = Button(window, text="REGISTER",state=DISABLED,command=combine_funcs(register_click, check_empty_email, check_empty_name, check_empty_phone))
 btnSignup.place(x=210, y=500)
 
 # Hiển thị
