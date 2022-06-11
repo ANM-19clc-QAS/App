@@ -7,7 +7,10 @@ import tkinter as tk
 import re
 import hashlib
 import uuid
+from tkcalendar import DateEntry
 
+data = []
+path = '/Users/anhquantran/Documents/GitHub/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
@@ -27,9 +30,7 @@ def valid_name(input):
         btnSignup.config(state='disabled')  
         return False 
 
-#data of user
-data = {}
-data['user'] = []
+
 
 # Tạo giao diện
 window = tk.Tk()
@@ -49,8 +50,10 @@ passphase = tk.StringVar()
 def register_click():
     salt = uuid.uuid4().hex
     hash_object = hashlib.sha256(salt.encode() + str(passphase.get()).encode('utf-8'))
+    with open(path+'user.txt') as fin:
+        data = json.load(fin)
 
-    data['user'].append({
+    data.append({
         'email': email.get(),
         'name': name.get(),
         'dob': dob.get(),
@@ -58,8 +61,10 @@ def register_click():
         'address': address.get(),
         'passphase': hash_object.hexdigest()+':'+salt
     })
-    with open('/home/nson/Desktop/App/user.txt', 'a') as outfile:
-        json.dump(data, outfile)
+
+    with open(path+'user.txt', 'w') as fout:
+        json.dump(data, fout, indent=4, separators=(',',': '))
+
 
 def check_empty_email() :
      if eEmail.get():
@@ -99,7 +104,7 @@ eEmail = Entry(window,font = ('Arial',15),textvariable=email,validate='focusout'
 eEmail.place(x= 200, y= 100)
 eName = Entry(window,font = ('Arial',15),textvariable=name,validate='focusout',validatecommand=(nameValid,'%P'))
 eName.place(x= 200, y= 150)
-eDOB = Entry(window,font = ('Arial',15),textvariable=dob)
+eDOB = DateEntry(window,font = ('Arial',15),textvariable=dob,selectmode='day')
 eDOB.place(x= 200, y= 200)
 ePhoneNumber = Entry(window,font = ('Arial',15),textvariable=phone)
 ePhoneNumber.place(x= 200, y= 250)
