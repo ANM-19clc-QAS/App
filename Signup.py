@@ -1,3 +1,4 @@
+from Signin import *
 from cProfile import label
 from datetime import datetime
 from time import time
@@ -12,7 +13,6 @@ from tokenize import String
 import uuid
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
-import time 
 import datetime as dt
 
 path = '/Users/anhquantran/Documents/GitHub/App/'
@@ -36,30 +36,30 @@ def valid_email(input):
             checkUserExist = True
 
     if re.search(regex_email,input) and input.isalpha and checkUserExist==False:
-        lbEmail_valid = Label(window, text='✅ Valid                                                                              ',font=('arial',10))
+        lbEmail_valid = Label(winsu, text='✅ Valid                                                                              ',font=('arial',10))
         lbEmail_valid.config(foreground="green")
         lbEmail_valid.place(x=201,y=130)
         btnSignup.config(state='active')  
         return True 
 
     elif re.search(regex_email,input) and input.isalpha and checkUserExist==True:
-        lbEmail_exist = Label(window, text='❌ Email has been registered! Please try another email!',font=('arial',10))
+        lbEmail_exist = Label(winsu, text='❌ Email has been registered! Please try another email!',font=('arial',10))
         lbEmail_exist.config(foreground="red")
         lbEmail_exist.place(x=201,y=130)
         btnSignup.config(state='disabled') 
         return False
 
     else:
-        lbEmail_error = Label(window, text='❌ Email is not valid! Please try again',font=('arial',10))
+        lbEmail_error = Label(winsu, text='❌ Email is not valid! Please try again',font=('arial',10))
         lbEmail_error.config(foreground="red")
         lbEmail_error.place(x=201,y=130)
         btnSignup.config(state='disabled')  
         return False 
 
 def valid_name(input):
-    lbName_valid = Label(window, text='✅ Valid                                                                    ',font=('arial',9))
+    lbName_valid = Label(winsu, text='✅ Valid                                                                    ',font=('arial',9))
     lbName_valid.config(foreground="green")
-    lbName_error = Label(window, text='❌ Name is not valid! Please try again',font=('arial',10))
+    lbName_error = Label(winsu, text='❌ Name is not valid! Please try again',font=('arial',10))
     lbName_error.config(foreground="red")
     if(re.search(regex_name,input) and input.isalpha and len(input)<50):
         lbName_error.destroy()
@@ -83,9 +83,9 @@ def valid_dob(input):
     except ValueError :
         isValidDate = False
 
-    lbDOB_valid = Label(window, text='✅ Valid                                                                    ',font=('arial',9))
+    lbDOB_valid = Label(winsu, text='✅ Valid                                                                    ',font=('arial',9))
     lbDOB_valid.config(foreground="green")
-    lbDOB_error = Label(window, text='❌ Date of birth is not valid! Please try again',font=('arial',10))
+    lbDOB_error = Label(winsu, text='❌ Date of birth is not valid! Please try again',font=('arial',10))
     lbDOB_error.config(foreground="red")
     
     if(isValidDate):
@@ -100,9 +100,9 @@ def valid_dob(input):
         return False 
 
 def valid_phone(input):
-    lbPhone_valid = Label(window, text='✅ Valid                                                                    ',font=('arial',9))
+    lbPhone_valid = Label(winsu, text='✅ Valid                                                                    ',font=('arial',9))
     lbPhone_valid.config(foreground="green")
-    lbPhone_error = Label(window, text='❌ Phone number is not valid! Please try again',font=('arial',10))
+    lbPhone_error = Label(winsu, text='❌ Phone number is not valid! Please try again',font=('arial',10))
     lbPhone_error.config(foreground="red")
     
     # Entry with 10 numbers is ok
@@ -119,7 +119,7 @@ def valid_phone(input):
         btnSignup.config(state='disabled')  
         return False
 
-#Passphase validation
+#passphrase validation
 def passphrase_format():
 
     SpecialSym =['$', '@', '#', '%', ' ', '.', '?', '_', '-', '/', ',']
@@ -159,10 +159,10 @@ def passphrase_format():
         return val
 
 def valid_pass(input):
-    lbPass_valid = Label(window, text='✅ Valid                                                                    \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       '
+    lbPass_valid = Label(winsu, text='✅ Valid                                                                    \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       '
     ,font=('arial',9))
     lbPass_valid.config(foreground="green")
-    lbPass_error = Label(window, text='❌ Passphrase is not valid!\nPlease create a passphrase that meets the following conditions:\n- Length from 6 to 20 characters.\n- Includes special characters: \'$\', \'@\', \'#\', \'%\', \' \', \'.\', \'?\', \'_\', \'-\', \'/\', \',\'\n- Uppercase and lowercase letters.\n- Number.\n- Not the same as the information entered above.',font=('arial',10))
+    lbPass_error = Label(winsu, text='❌ Passphrase is not valid!\nPlease create a passphrase that meets the following conditions:\n- Length from 6 to 20 characters.\n- Includes special characters: \'$\', \'@\', \'#\', \'%\', \' \', \'.\', \'?\', \'_\', \'-\', \'/\', \',\'\n- Uppercase and lowercase letters.\n- Number.\n- Not the same as the information entered above.',font=('arial',10))
     lbPass_error.config(foreground="red")
 
     if passphrase_format()==TRUE:
@@ -178,8 +178,9 @@ def valid_pass(input):
         btnSignup.config(state='disabled')
         return False
     
-def success():
-    return messagebox.showinfo('Message box',f'You have successfully registered!',icon='info')
+def success_signup():
+    if messagebox.showinfo('Message box',f'You have successfully registered!',icon='info'):
+        winsu.destroy()
 
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
@@ -188,14 +189,14 @@ def combine_funcs(*funcs):
     return combined_func
 
 # Create UI
-window = tk.Tk()
-window.geometry("500x600")
-window.title("Mã hóa")
-mailValid = window.register(valid_email)
-nameValid = window.register(valid_name)
-dobValid = window.register(valid_dob)
-phoneValid = window.register(valid_phone)
-passValid = window.register(valid_pass)
+winsu = tk.Tk()
+winsu.geometry("500x600")
+winsu.title("Mã hóa")
+mailValid = winsu.register(valid_email)
+nameValid = winsu.register(valid_name)
+dobValid = winsu.register(valid_dob)
+phoneValid = winsu.register(valid_phone)
+passValid = winsu.register(valid_pass)
 
 #save data after click register button
 def register_click():
@@ -208,13 +209,13 @@ def register_click():
         'dob': eDOB.get(),
         'phone': ePhoneNumber.get(),
         'address': eAddress.get(),
-        'passphrase': hash_object.hexdigest()+':'+salt
+        'passphrase': hash_object.hexdigest()+':'+salt,
+        'Ksecret': ''
     })
     print(data)
     with open(path+'user.txt', 'w') as fout:
         json.dump(data, fout, indent=4, separators=(',',': '))
 
-    #success()
 
 def showPass():
     if(cShow_v.get()==1):
@@ -222,50 +223,48 @@ def showPass():
     else:
         ePassphrase.config(show='*')
 
-lbSignup = Label(window, text="SIGN UP", font=("arial", 25))
+lbSignup = Label(winsu, text="SIGN UP", font=("arial", 25))
 lbSignup.place(x=200, y=40)
-lbEmail = Label(window, text='Email',font=('arial',15))
+lbEmail = Label(winsu, text='Email',font=('arial',15))
 lbEmail.place(x = 50,y = 100)
-lbName = Label(window, text='Full Name',font=('arial',15))
+lbName = Label(winsu, text='Full Name',font=('arial',15))
 lbName.place(x = 50,y = 150)
-lbDOB = Label(window, text='Date of birth',font=('arial',15))
+lbDOB = Label(winsu, text='Date of birth',font=('arial',15))
 lbDOB.place(x = 50,y = 200)
-lbPhoneNumber = Label(window, text='Phone number',font=('arial',15))
+lbPhoneNumber = Label(winsu, text='Phone number',font=('arial',15))
 lbPhoneNumber.place(x = 50,y = 250)
-lbAddress = Label(window, text='Address',font=('arial',15))
+lbAddress = Label(winsu, text='Address',font=('arial',15))
 lbAddress.place(x = 50,y = 300)
-lbPassphrase = Label(window, text='Passphrase',font=('arial',15))
+lbPassphrase = Label(winsu, text='Passphrase',font=('arial',15))
 lbPassphrase.place(x = 50,y = 350)
 
 email = tk.StringVar()
-eEmail = Entry(window,width=25,font = ('Arial',15),validate='focusout',textvariable=email,validatecommand=(mailValid,'%P'))
+eEmail = Entry(winsu,width=25,font = ('Arial',15),validate='focusout',textvariable=email,validatecommand=(mailValid,'%P'))
 eEmail.place(x= 200, y= 100)
 
-eName = Entry(window,width=25,font = ('Arial',15),validate='focusout',validatecommand=(nameValid,'%P'))
+eName = Entry(winsu,width=25,font = ('Arial',15),validate='focusout',validatecommand=(nameValid,'%P'))
 eName.place(x= 200, y= 150)
 
-eDOB = DateEntry(window,font = ('Arial',15),fieldbackground='light green',background= 'lemonchiffon', 
+eDOB = DateEntry(winsu,font = ('Arial',15),fieldbackground='light green',background= 'lemonchiffon', 
                 foreground= 'dark blue',selectmode='day',maxdate=datetime.today(),
                 showweeknumbers=FALSE,selectforeground='red',validate='focusout',validatecommand=(dobValid,'%P'))
 eDOB.place(x= 201, y= 200)
 
-ePhoneNumber = Entry(window,width=25,font = ('Arial',15),validate='focusout',validatecommand=(phoneValid,'%P'))
+ePhoneNumber = Entry(winsu,width=25,font = ('Arial',15),validate='focusout',validatecommand=(phoneValid,'%P'))
 ePhoneNumber.place(x= 200, y= 250)
 
-eAddress = Entry(window,width=25,font = ('Arial',15),validate='focusout')
+eAddress = Entry(winsu,width=25,font = ('Arial',15),validate='focusout')
 eAddress.place(x= 200, y= 300)
 
-ePassphrase = Entry(window,width=25,font = ('Arial',15),show='*',validate='focusout',validatecommand=(passValid,'%P'))
+ePassphrase = Entry(winsu,width=25,font = ('Arial',15),show='*',validate='focusout',validatecommand=(passValid,'%P'))
 ePassphrase.place(x=200, y= 350)
 
 cShow_v = IntVar(value=0)
-cShowPass = Checkbutton(window,text='Show passphrase',variable=cShow_v,onvalue=1,offvalue=0,command=showPass)
+cShowPass = Checkbutton(winsu,text='Show passphrase',variable=cShow_v,onvalue=1,offvalue=0,command=showPass)
 cShowPass.place(x=200, y=380)
 
-btnSignup = Button(window,text="REGISTER",state=DISABLED,command=combine_funcs(register_click,success))
+btnSignup = Button(winsu,text="REGISTER",state=DISABLED,command=combine_funcs(register_click,success_signup))
 btnSignup.place(x=190, y=500)
 
 # Display UI
-window.mainloop()
-
-# Lỗi similar nên không write data được
+winsu.mainloop()
