@@ -63,7 +63,9 @@ def checkAccount():
 
 def success_signin():
     if messagebox.showinfo('Message box',f'You have successfully sign in!',icon='info'):
+        
         winsi.destroy()
+
 
 def showPassIn():
     if(cShow_vin.get()==1):
@@ -105,5 +107,5 @@ btnSignin = Button(winsi, text="LOGIN",state=DISABLED,command=checkAccount)
 btnSignin.place(x=210, y=220)
 
 # Hiển thị
-winsi.mainloop()
+
 

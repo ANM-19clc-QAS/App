@@ -1,3 +1,4 @@
+from click import command
 from Signin import *
 from cProfile import label
 from datetime import datetime
@@ -14,6 +15,11 @@ import uuid
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
+
+# Create UI
+winsu = tk.Tk()
+winsu.geometry("500x600")
+winsu.title("Mã hóa")
 
 path = '/Users/anhquantran/Documents/GitHub/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -177,10 +183,20 @@ def valid_pass(input):
         lbPass_error.place(x = 201,y = 400) 
         btnSignup.config(state='disabled')
         return False
+
+mailValid = winsu.register(valid_email)
+nameValid = winsu.register(valid_name)
+dobValid = winsu.register(valid_dob)
+phoneValid = winsu.register(valid_phone)
+passValid = winsu.register(valid_pass)
     
 def success_signup():
-    if messagebox.showinfo('Message box',f'You have successfully registered!',icon='info'):
-        winsu.destroy()
+    if messagebox.showinfo('Message box',f'You have successfully registered!',icon='info',command=close_winsu):
+        #winsu.destroy()
+        winsi.mainloop()
+
+def close_winsu():
+    winsu.destroy()
 
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
@@ -188,18 +204,9 @@ def combine_funcs(*funcs):
             f(*args, **kwargs)
     return combined_func
 
-# Create UI
-winsu = tk.Tk()
-winsu.geometry("500x600")
-winsu.title("Mã hóa")
-mailValid = winsu.register(valid_email)
-nameValid = winsu.register(valid_name)
-dobValid = winsu.register(valid_dob)
-phoneValid = winsu.register(valid_phone)
-passValid = winsu.register(valid_pass)
-
 #save data after click register button
 def register_click():
+    
     salt = uuid.uuid4().hex
     hash_object = hashlib.sha256(salt.encode() + str(ePassphrase.get()).encode('utf-8'))
 
@@ -268,3 +275,4 @@ btnSignup.place(x=190, y=500)
 
 # Display UI
 winsu.mainloop()
+
