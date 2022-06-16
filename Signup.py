@@ -113,15 +113,14 @@ def valid_phone(input):
     
     # Entry with 10 numbers is ok
     if len(input) == 10 and input.isnumeric(): 
-        lbPhone_error.destroy()
+        lbPhone_error.grid_remove()
         lbPhone_valid.place(x = 201,y = 280)
         btnSignup.config(state='active')
         return True
     # Anything else, reject it
     else:
-        lbPhone_valid.destroy()
+        lbPhone_valid.grid_remove()
         lbPhone_error.place(x = 201,y = 280) 
-
         btnSignup.config(state='disabled')  
         return False
 
