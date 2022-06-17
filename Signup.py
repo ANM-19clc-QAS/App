@@ -1,5 +1,4 @@
 from click import command
-from Signin import *
 from cProfile import label
 from datetime import datetime
 from time import time
@@ -16,14 +15,101 @@ from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
 
-# Create UI
+path = '/Users/anhquantran/Documents/GitHub/App/'
+regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
+
+# Create UI for Sign up screen
 winsu = tk.Tk()
 winsu.geometry("500x600")
 winsu.title("Mã hóa")
 
-path = '/Users/anhquantran/Documents/GitHub/App/'
-regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
+def openSignin():
+    # Create UI for Sign in screen
+    winsi = tk.Tk()
+    winsi.geometry("500x300")
+    winsi.title("Mã hóa")
+
+    #SIGN IN screen
+    users = {}
+    users['user'] = []
+
+    class User(object):
+        def __init__(self, email, passphrase):
+            self.email = email
+            self.passphrase = passphrase
+
+    def object_decoder(obj):
+        #print(obj['email'] + obj['email'])
+        if 'email' in obj and 'passphrase' in obj:
+            users['user'].append(User(obj['name'], obj['passphrase'])) 
+
+    def valid_signin_email(input):
+        if(re.search(regex_email,input) and input.isalpha):
+            btnSignin.config(state='active')  
+            return True        
+        else:
+            btnSignin.config(state='disabled')  
+            return False 
+
+    def check_password(hashed_password, user_password):
+        password, salt = hashed_password.split(':')
+        return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
+
+    def checkAccount():
+        
+        data_file = open(path+'user.txt').read()
+        data = json.loads(data_file)
+
+        for i in data:
+            if (i["email"] == email.get()) & check_password(i['passphrase'],SIpassphrase.get()):
+                success_signin()
+                break
+            else:
+                SInotification.set("Not Right Password or Email")
+        
+    def success_signin():
+        if messagebox.showinfo('Message box',f'You have successfully sign in!',icon='info'):
+            
+            winsi.destroy()
+
+    def showPassIn():
+        if(cShow_vin.get()==1):
+            eSIpassphrase.config(show='')
+        else:
+            eSIpassphrase.config(show='*')
+
+
+    mailValid = winsi.register(valid_signin_email)
+
+    SIemail = tk.StringVar()
+    SIpassphrase = tk.StringVar()
+    SInotification = tk.StringVar()
+
+    # Body
+    lbSignin = Label(winsi, text="SIGN IN", font=("arial", 25))
+    lbSignin.place(x=200, y=40)
+    lbSIEmail = Label(winsi, text='Email',font=('arial',15))
+    lbSIEmail.place(x = 50,y = 100)
+    lbSIpassphrase = Label(winsi, text='passphrase',font=('arial',15))
+    lbSIpassphrase.place(x = 50,y = 150)
+
+    lbSINotification = Label(winsi,font=('arial',10),textvariable=SInotification)
+    lbSINotification.place(x = 200,y = 200)
+
+    eSIEmail = Entry(winsi,width=25,font = ('Arial',15),textvariable=email,validate='focusout',validatecommand=(mailValid,'%P'))
+    eSIEmail.place(x= 200, y= 100)
+    eSIpassphrase = Entry(winsi,width=25,font = ('Arial',15),textvariable=SIpassphrase,show='*')
+    eSIpassphrase.place(x= 200, y= 150)
+
+    cShow_vin = IntVar(value=0)
+    cShowPass = Checkbutton(winsi,text='Show passphrase',variable=cShow_vin,onvalue=1,offvalue=0,command=showPassIn)
+    cShowPass.place(x=200, y=180)
+
+    btnSignin = Button(winsi, text="LOGIN",state=DISABLED,command=checkAccount)
+    btnSignin.place(x=210, y=220)
+
+    winsi.mainloop()
 
 #get the probability of a string being similar to another string
 def similar(a, b):
@@ -32,6 +118,9 @@ def similar(a, b):
 #load json file and store users into data
 with open(path+'user.txt') as fin:
     data = json.load(fin)
+
+with open(path+'userkeys.txt') as fkin:
+    dataKey = json.load(fkin)
 
 def valid_email(input):
 
@@ -182,20 +271,15 @@ def valid_pass(input):
         lbPass_error.place(x = 201,y = 400) 
         btnSignup.config(state='disabled')
         return False
-
-mailValid = winsu.register(valid_email)
-nameValid = winsu.register(valid_name)
-dobValid = winsu.register(valid_dob)
-phoneValid = winsu.register(valid_phone)
-passValid = winsu.register(valid_pass)
     
 def success_signup():
-    if messagebox.showinfo('Message box',f'You have successfully registered!',icon='info',command=close_winsu):
-        #winsu.destroy()
-        winsi.mainloop()
-
-def close_winsu():
-    winsu.destroy()
+    top = Toplevel()
+    top.geometry("300x150")
+    top.title('Sign up')
+    mess = Label(top,text='You have registered successfully!')
+    mess.place(x=50,y=40)
+    btnOk = Button(top, text='OK',command=combine_funcs(top.destroy,winsu.destroy,openSignin))
+    btnOk.place(x=100,y=90)
 
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
@@ -216,19 +300,30 @@ def register_click():
         'phone': ePhoneNumber.get(),
         'address': eAddress.get(),
         'passphrase': hash_object.hexdigest()+':'+salt,
-        'Ksecret': ''
     })
-    print(data)
+
+    dataKey.append({
+        'email': eEmail.get(),
+        'kprivate': '',
+        'kpublic': '',
+        'ksecret': '',
+        'ksession': ''
+    })
+
     with open(path+'user.txt', 'w') as fout:
         json.dump(data, fout, indent=4, separators=(',',': '))
 
+    with open(path+'userkeys.txt','w') as fk:
+        json.dump(dataKey, fk, indent=4, separators=(',',': '))
 
+#show or hide password
 def showPass():
     if(cShow_v.get()==1):
         ePassphrase.config(show='')
     else:
         ePassphrase.config(show='*')
 
+#Label for Sign up
 lbSignup = Label(winsu, text="SIGN UP", font=("arial", 25))
 lbSignup.place(x=200, y=40)
 lbEmail = Label(winsu, text='Email',font=('arial',15))
@@ -244,6 +339,13 @@ lbAddress.place(x = 50,y = 300)
 lbPassphrase = Label(winsu, text='Passphrase',font=('arial',15))
 lbPassphrase.place(x = 50,y = 350)
 
+mailValid = winsu.register(valid_email)
+nameValid = winsu.register(valid_name)
+dobValid = winsu.register(valid_dob)
+phoneValid = winsu.register(valid_phone)
+passValid = winsu.register(valid_pass)
+
+#Entry for Sign up
 email = tk.StringVar()
 eEmail = Entry(winsu,width=25,font = ('Arial',15),validate='focusout',textvariable=email,validatecommand=(mailValid,'%P'))
 eEmail.place(x= 200, y= 100)
@@ -272,6 +374,12 @@ cShowPass.place(x=200, y=380)
 btnSignup = Button(winsu,text="REGISTER",state=DISABLED,command=combine_funcs(register_click,success_signup))
 btnSignup.place(x=190, y=500)
 
-# Display UI
+bGoSignin = Button(winsu,text='SIGN IN',command=combine_funcs(winsu.destroy,openSignin))
+bGoSignin.place(x=400,y=10)
+
 winsu.mainloop()
+
+
+
+
 

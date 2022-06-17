@@ -1,6 +1,5 @@
-from crypto import Random
-from crypto.PublicKey import RSA
-import rsa
+from Cryptodome import Random
+from Cryptodome.PublicKey import RSA
 from tkinter import *
 from tkinter.ttk import *
 from tkinter import messagebox
@@ -14,7 +13,7 @@ import re
 # (pubkey, privkey) = rsa.newkeys(2048)
 random_generator = Random.new().read
 key = RSA.generate(2048,random_generator)
-privkey, pubkey = key, key.publickey()
+privkey, pubkey = key.exportKey().splitlines()[1:-1], key.publickey().exportKey().splitlines()[1:-1]
 #publickey = key.public_key # pub key export for exchange
 
 window = tk.Tk()
