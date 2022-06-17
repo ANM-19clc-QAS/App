@@ -12,7 +12,7 @@ import hashlib
 from tokenize import String
 from tkinter import messagebox
 
-path = '/Users/anhquantran/Documents/GitHub/App/'
+path = '/Users/son.n/Desktop/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 
 #data of user

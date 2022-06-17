@@ -21,7 +21,7 @@ winsu = tk.Tk()
 winsu.geometry("500x600")
 winsu.title("Mã hóa")
 
-path = '/Users/anhquantran/Documents/GitHub/App/'
+path = '/Users/son.n/Desktop/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
