@@ -16,7 +16,7 @@ from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
 
-# with open(path+'user.txt') as fin:
+# with open('user.txt') as fin:
 #     data = json.load(fin)
 print('hehe: '+str(email.get()))
 
