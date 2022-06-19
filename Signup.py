@@ -7,6 +7,7 @@ import re
 import hashlib
 from tokenize import String
 import uuid
+from numpy import empty
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
@@ -21,6 +22,7 @@ regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 data_file = open('user.txt').read()
 data = json.loads(data_file)
 
+#DO MANY FUNCTIONS
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
         for f in funcs:
@@ -380,6 +382,7 @@ def openSignup():
 
     winsu.mainloop()
 
+#MENU
 def openMenu():
     winM = tk.Tk()
     winM.geometry("700x800")
@@ -399,7 +402,7 @@ def openMenu():
     lbMenu = Label(winM, text="MENU", font=("arial", 25))
     lbMenu.place(x=310, y=80)
 
-    bEdit = tk.Button(winM, font = ('Arial',18),text='Edit information',command=combine_funcs(winM.destroy,openEditInfo),height=4,width=20)
+    bEdit = tk.Button(winM, font = ('Arial',18),text='Edit information',command=combine_funcs(winM.destroy,openConfirmPass),height=4,width=20)
     bEdit.place(x=50, y=150)
 
     bGenKey = tk.Button(winM, font = ('Arial',18),text='Generate RSA keys',command=combine_funcs(winM.destroy,openGenerateKey),height=4,width=20)
@@ -419,58 +422,31 @@ def openMenu():
 
     winM.mainloop()
 
+#EDIT INFORMATION
 def openEditInfo():
     winEd = tk.Tk()
     winEd.geometry("700x800")
     winEd.title("Mã hóa")
 
     lbTitle = Label(winEd, text="EDIT INFORMATION", font=('arial', 20))
-    lbTitle.place(x=250, y=50)
+    lbTitle.place(x=250, y=70)
 
     def similar(a, b):
         return SequenceMatcher(None, a, b).ratio()
 
-    def valid_email(input):
-        #check email existance
-        checkUserExist = False
-        for i in data:
-            if(i['email']==str(email.get())): 
-                checkUserExist = True
-
-        if re.search(regex_email,input) and input.isalpha and checkUserExist==False:
-            lbEmail_valid = Label(winEd, text='✅ Valid                                                                              ',font=('arial',10))
-            lbEmail_valid.config(foreground="green")
-            lbEmail_valid.place(x=201,y=130)
-            btnSignup.config(state='active')  
-            return True 
-
-        elif re.search(regex_email,input) and input.isalpha and checkUserExist==True:
-            lbEmail_exist = Label(winEd, text='❌ Email has been registered! Please try another email!',font=('arial',10))
-            lbEmail_exist.config(foreground="red")
-            lbEmail_exist.place(x=201,y=130)
-            btnSignup.config(state='disabled') 
-            return False
-
-        else:
-            lbEmail_error = Label(winEd, text='❌ Email is not valid! Please try again',font=('arial',10))
-            lbEmail_error.config(foreground="red")
-            lbEmail_error.place(x=201,y=130)
-            btnSignup.config(state='disabled')  
-            return False 
-
     def valid_name(input):
         lbName_valid = Label(winEd, text='✅ Valid                                                                    ',font=('arial',9))
         lbName_valid.config(foreground="green")
-        lbName_error = Label(winEd, text='❌ Name is not valid! Please try again',font=('arial',10))
+        lbName_error = Label(winEd, text='❌ Name is not valid! Please try again',font=('arial',9))
         lbName_error.config(foreground="red")
         if(re.search(regex_name,input) and input.isalpha and len(input)<50):
             lbName_error.destroy()
-            lbName_valid.pack(padx=201,pady=180,fill='both')
+            lbName_valid.pack(padx=301,pady=230,fill='both')
             btnSignup.config(state='active')  
             return True        
         else:
             lbName_valid.destroy()
-            lbName_error.pack(padx=201,pady=180,fill='both')
+            lbName_error.pack(padx=301,pady=230,fill='both')
             btnSignup.config(state='disabled')  
             return False 
 
@@ -492,12 +468,12 @@ def openEditInfo():
         
         if(isValidDate):
             lbDOB_error.destroy()
-            lbDOB_valid.place(x=201,y=230)
+            lbDOB_valid.place(x=301,y=280)
             btnSignup.config(state='active')  
             return True        
         else:
             lbDOB_valid.destroy()
-            lbDOB_error.place(x=201,y=230)
+            lbDOB_error.place(x=301,y=280)
             btnSignup.config(state='disabled')  
             return False 
 
@@ -510,13 +486,13 @@ def openEditInfo():
         # Entry with 10 numbers is ok
         if len(input) == 10 and input.isnumeric(): 
             lbPhone_error.grid_remove()
-            lbPhone_valid.place(x = 201,y = 280)
+            lbPhone_valid.place(x = 301,y = 330)
             btnSignup.config(state='active')
             return True
         # Anything else, reject it
         else:
             lbPhone_valid.grid_remove()
-            lbPhone_error.place(x = 201,y = 280) 
+            lbPhone_error.place(x = 301,y = 330) 
             btnSignup.config(state='disabled')  
             return False
 
@@ -568,45 +544,34 @@ def openEditInfo():
 
         if passphrase_format()==TRUE:
             lbPass_error.destroy()
-            lbPass_valid.place(x = 201,y = 400)
+            lbPass_valid.place(x = 301,y = 450)
             btnSignup.config(state='active')
             return True
 
         # Anything else, reject it
         else:
             lbPass_valid.destroy()
-            lbPass_error.place(x = 201,y = 400) 
+            lbPass_error.place(x = 301,y = 450) 
             btnSignup.config(state='disabled')
             return False
 
     #save data after click register button
-    def register_click():
-        
+    def edit_click():
+
         salt = uuid.uuid4().hex
         hash_object = hashlib.sha256(salt.encode() + str(ePassphrase.get()).encode('utf-8'))
 
-        data.append({
-            'email': eEmail.get(),
-            'name': eName.get(),
-            'dob': eDOB.get(),
-            'phone': ePhoneNumber.get(),
-            'address': eAddress.get(),
-            'passphrase': hash_object.hexdigest()+':'+salt,
-        })
-
-        # dataKey.append({
-        #     'email': eEmail.get(),
-        #     'kprivate': '',
-        #     'kpublic': '',
-        #     'ksecret': '',
-        #     'ksession': ''
-        # })
+        for i in data:
+            if (i["email"] == SIemail.get()):
+                i["name"] = eName.get()
+                i["dob"] = eDOB.get()
+                i["phone"] = ePhoneNumber.get()
+                i["address"] = eAddress.get()
+                if(ePassphrase.get()==''):
+                    i["passphrase"] = hash_object.hexdigest()+':'+salt
 
         with open('user.txt', 'w') as fout:
             json.dump(data, fout, indent=4, separators=(',',': '))
-
-        # with open('userkeys.txt','w') as fk:
-        #     json.dump(dataKey, fk, indent=4, separators=(',',': '))
 
         success_edit()
         # winsu.destroy()
@@ -622,23 +587,21 @@ def openEditInfo():
         else:
             ePassphrase.config(show='*')
 
-    #Label for Sign up
-    lbSignup = Label(winEd, text="SIGN UP", font=("arial", 25))
-    lbSignup.place(x=200, y=40)
+    #Label for Edit info
+    
     lbEmail = Label(winEd, text='Email',font=('arial',15))
-    lbEmail.place(x = 50,y = 100)
+    lbEmail.place(x = 150,y = 150)
     lbName = Label(winEd, text='Full Name',font=('arial',15))
-    lbName.place(x = 50,y = 150)
+    lbName.place(x = 150,y = 200)
     lbDOB = Label(winEd, text='Date of birth',font=('arial',15))
-    lbDOB.place(x = 50,y = 200)
+    lbDOB.place(x = 150,y = 250)
     lbPhoneNumber = Label(winEd, text='Phone number',font=('arial',15))
-    lbPhoneNumber.place(x = 50,y = 250)
+    lbPhoneNumber.place(x = 150,y = 300)
     lbAddress = Label(winEd, text='Address',font=('arial',15))
-    lbAddress.place(x = 50,y = 300)
+    lbAddress.place(x = 150,y = 350)
     lbPassphrase = Label(winEd, text='Passphrase',font=('arial',15))
-    lbPassphrase.place(x = 50,y = 350)
+    lbPassphrase.place(x = 150,y = 400)
 
-    mailValid = winEd.register(valid_email)
     nameValid = winEd.register(valid_name)
     dobValid = winEd.register(valid_dob)
     phoneValid = winEd.register(valid_phone)
@@ -646,6 +609,7 @@ def openEditInfo():
 
     for i in data:
             if(i['email']==str(SIemail.get())): 
+                sEmail = i['email']
                 sName = i["name"]
                 sDOB = i["dob"]
                 sPhone = i["phone"]
@@ -654,38 +618,41 @@ def openEditInfo():
                 break
                 
     #Entry for Edit Info
-    eEmail = Entry(winEd,width=25,font = ('Arial',15),state=DISABLED)
-    eEmail.insert(0,SIemail.get())
-    eEmail.place(x= 200, y= 100)
+    eEmail = Entry(winEd,width=25,font = ('Arial',15))
+    eEmail.insert(0,sEmail)
+    eEmail.config(state=DISABLED)
+    eEmail.place(x= 300, y= 150)
 
     eName = Entry(winEd,width=25,font = ('Arial',15),validate='focusout',validatecommand=(nameValid,'%P'))
     eName.insert(0,sName)
-    eName.place(x= 200, y= 150)
+    eName.place(x= 300, y= 200)
 
     eDOB = DateEntry(winEd,font = ('Arial',15),fieldbackground='light green',background= 'lemonchiffon', 
                     foreground= 'dark blue',selectmode='day',maxdate=datetime.today(),date_pattern='dd/mm/yyyy',
                     showweeknumbers=FALSE,selectforeground='red',validate='focusout',validatecommand=(dobValid,'%P'))
     
-    eDOB.place(x= 201, y= 200)
+    eDOB.place(x= 301, y= 250)
 
     ePhoneNumber = Entry(winEd,width=25,font = ('Arial',15),validate='focusout',validatecommand=(phoneValid,'%P'))
-    ePhoneNumber.place(x= 200, y= 250)
+    ePhoneNumber.insert(0,sPhone)
+    ePhoneNumber.place(x= 300, y= 300)
 
     eAddress = Entry(winEd,width=25,font = ('Arial',15))
-    eAddress.place(x= 200, y= 300)
+    eAddress.insert(0,sAdd)
+    eAddress.place(x= 300, y= 350)
 
     ePassphrase = Entry(winEd,width=25,font = ('Arial',15),show='*',validate='focusout',validatecommand=(passValid,'%P'))
-    ePassphrase.place(x=200, y= 350)
+    ePassphrase.place(x=300, y= 400)
 
     cShow_v = IntVar(value=0)
     cShowPass = Checkbutton(winEd,text='Show passphrase',variable=cShow_v,onvalue=1,offvalue=0,command=showPass)
-    cShowPass.place(x=200, y=380)
+    cShowPass.place(x=300, y=430)
 
-    btnSignup = Button(winEd,text="SAVE",state=DISABLED,command=combine_funcs(register_click))
-    btnSignup.place(x=190, y=500)
+    btnSignup = Button(winEd,text="SAVE",state=DISABLED,command=combine_funcs(edit_click))
+    btnSignup.place(x=230, y=600)
 
     btnBack = Button(winEd, text = 'BACK',command=combine_funcs(winEd.destroy,openMenu))
-    btnBack.place(x=200, y=600)
+    btnBack.place(x=380, y=600)
 
 
 def openGenerateKey():
@@ -723,6 +690,52 @@ def openGenerateKey():
     btnBack.place(x=200, y=600)
 
     winGen.mainloop()
+
+def openConfirmPass():
+    winCon = tk.Tk()
+    winCon.geometry("500x300")
+    winCon.title("Mã hóa")
+
+    def check_password(hashed_password, user_password):
+        password, salt = hashed_password.split(':')
+        return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
+
+    def showPassIn():
+        if(cShow_vin.get()==1):
+            eSIpassphrase.config(show='')
+        else:
+            eSIpassphrase.config(show='*')
+
+    def checkAccount():
+        for i in data:
+            if (i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get()):
+                messagebox.showinfo('Edit information','Your passphrase is correct!')
+                winCon.destroy()
+                openEditInfo()
+                break
+            else:
+                messagebox.showinfo("Your passphrase is not valid!\nPlease try again!")
+
+    passphrase = tk.StringVar()
+
+    lbConfirm = Label(winCon, text='Please enter your passphrase before editting:',font=('arial',15))
+    lbConfirm.place(x = 50,y = 60)
+
+    lbSIpassphrase = Label(winCon, text='Passphrase:',font=('arial',15))
+    lbSIpassphrase.place(x = 50,y = 110)
+
+    eSIpassphrase = Entry(winCon,width=25,font = ('Arial',15),textvariable=passphrase,show='*')
+    eSIpassphrase.place(x= 200, y= 110)
+
+    cShow_vin = IntVar(value=0)
+    cShowPass = Checkbutton(winCon,text='Show passphrase',variable=cShow_vin,onvalue=1,offvalue=0,command=showPassIn)
+    cShowPass.place(x=200, y=140)
+
+    btnSignin = Button(winCon, text="CONFIRM",command=checkAccount)
+    btnSignin.place(x=210, y=220)
+
+    bGoSignup = Button(winCon,text='BACK',command=combine_funcs(winCon.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
 
 def openEncodeFile():
     pass
