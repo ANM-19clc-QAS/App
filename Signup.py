@@ -14,6 +14,7 @@ import datetime as dt
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
 from tkinter import messagebox
+from datetime import datetime
 
 path = '/Users/anhquantran/Documents/GitHub/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
@@ -530,7 +531,10 @@ def openEditInfo():
             val= False  
 
         if similar(str(ePassphrase.get()),str(ePhoneNumber.get()))>=0.3:
-            val= False   
+            val= False  
+
+        if str(ePassphrase.get())=="":
+            val=True 
 
         if val:
             return val
@@ -541,10 +545,18 @@ def openEditInfo():
         lbPass_valid.config(foreground="green")
         lbPass_error = Label(winEd, text='❌ Passphrase is not valid!\nPlease create a passphrase that meets the following conditions:\n- Length from 6 to 20 characters.\n- Includes special characters: \'$\', \'@\', \'#\', \'%\', \' \', \'.\', \'?\', \'_\', \'-\', \'/\', \',\'\n- Uppercase and lowercase letters.\n- Number.\n- Not the same as the information entered above.',font=('arial',10))
         lbPass_error.config(foreground="red")
+        lbPass_empty = Label(winEd, text='                                                                            \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       \n                                                                                                                       '
+        ,font=('arial',9))
 
         if passphrase_format()==TRUE:
             lbPass_error.destroy()
             lbPass_valid.place(x = 301,y = 450)
+            btnSignup.config(state='active')
+            return True
+
+        #If user do not change passphrase
+        elif passphrase_format()==FALSE & ePassphrase.get()=='':
+            lbPass_empty.place(x = 301,y = 450)
             btnSignup.config(state='active')
             return True
 
@@ -557,7 +569,6 @@ def openEditInfo():
 
     #save data after click register button
     def edit_click():
-
         salt = uuid.uuid4().hex
         hash_object = hashlib.sha256(salt.encode() + str(ePassphrase.get()).encode('utf-8'))
 
@@ -567,15 +578,14 @@ def openEditInfo():
                 i["dob"] = eDOB.get()
                 i["phone"] = ePhoneNumber.get()
                 i["address"] = eAddress.get()
-                if(ePassphrase.get()==''):
+                if(ePassphrase.get()!=''):
                     i["passphrase"] = hash_object.hexdigest()+':'+salt
 
         with open('user.txt', 'w') as fout:
             json.dump(data, fout, indent=4, separators=(',',': '))
-
+        
+        fout.close()
         success_edit()
-        # winsu.destroy()
-        openSignin()
 
     def success_edit():
         messagebox.showinfo('EDIT INFORMATION', 'You have successfully edited!')
@@ -614,9 +624,12 @@ def openEditInfo():
                 sDOB = i["dob"]
                 sPhone = i["phone"]
                 sAdd = i["address"]
-                sPass = i["passphrase"]
                 break
-                
+    
+    dob = sDOB.split('/')
+    dd = int(dob[0])
+    mm = int(dob[1])
+    yyyy = int(dob[2])
     #Entry for Edit Info
     eEmail = Entry(winEd,width=25,font = ('Arial',15))
     eEmail.insert(0,sEmail)
@@ -629,7 +642,8 @@ def openEditInfo():
 
     eDOB = DateEntry(winEd,font = ('Arial',15),fieldbackground='light green',background= 'lemonchiffon', 
                     foreground= 'dark blue',selectmode='day',maxdate=datetime.today(),date_pattern='dd/mm/yyyy',
-                    showweeknumbers=FALSE,selectforeground='red',validate='focusout',validatecommand=(dobValid,'%P'))
+                    showweeknumbers=FALSE,selectforeground='red',validate='focusout',validatecommand=(dobValid,'%P'),
+                    year=yyyy,month=mm,day=dd)
     
     eDOB.place(x= 301, y= 250)
 
@@ -708,17 +722,23 @@ def openConfirmPass():
 
     def checkAccount():
         for i in data:
+            print(i["email"])
+            # if ((i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get())==FALSE):
+            #     messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
+            #     break
             if (i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get()):
+                print(i["email"])
                 messagebox.showinfo('Edit information','Your passphrase is correct!')
                 winCon.destroy()
                 openEditInfo()
                 break
             else:
-                messagebox.showinfo("Your passphrase is not valid!\nPlease try again!")
-
+                noti.set("Your passphrase is incorrect!")
+            
     passphrase = tk.StringVar()
+    noti = tk.StringVar()
 
-    lbConfirm = Label(winCon, text='Please enter your passphrase before editting:',font=('arial',15))
+    lbConfirm = Label(winCon, text='Please enter your passphrase before editing:',font=('arial',15))
     lbConfirm.place(x = 50,y = 60)
 
     lbSIpassphrase = Label(winCon, text='Passphrase:',font=('arial',15))
@@ -730,6 +750,10 @@ def openConfirmPass():
     cShow_vin = IntVar(value=0)
     cShowPass = Checkbutton(winCon,text='Show passphrase',variable=cShow_vin,onvalue=1,offvalue=0,command=showPassIn)
     cShowPass.place(x=200, y=140)
+
+    lbNotification = Label(winCon,font=('arial',10),textvariable=noti)
+    lbNotification.place(x = 200,y = 160)
+    lbNotification.config(foreground="red")
 
     btnSignin = Button(winCon, text="CONFIRM",command=checkAccount)
     btnSignin.place(x=210, y=220)
@@ -750,7 +774,7 @@ if __name__ == "__main__":
     openSignup()
     #openMenu()
     #openGenerateKey()
-    del data
+    #del data
     
 
 
