@@ -2,6 +2,7 @@ from argparse import FileType
 from cgitb import text
 from datetime import datetime
 from select import select
+
 from tkinter import *
 from tkinter import filedialog
 from tkinter.ttk import *
@@ -15,16 +16,21 @@ from numpy import empty
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
+
 import os
+
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
 from tkinter import messagebox
-from datetime import datetime
-path = '/Users/son.n/Desktop/App/'
+
+
+
+path = '/Users/anhquantran/Documents/GitHub/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
-data_file = open(path + 'user.txt').read()
+data_file = open('user.txt').read()
+
 data = json.loads(data_file)
 
 #DO MANY FUNCTIONS
@@ -135,7 +141,9 @@ def openSignup():
         return SequenceMatcher(None, a, b).ratio()
 
     #load json file and store user's keys into dataKey
-    with open(path + 'userkeys.txt') as fkin:
+
+    with open('userkeys.txt') as fkin:
+
         dataKey = json.load(fkin)
 
     def valid_email(input):
@@ -395,6 +403,7 @@ def openMenu():
 
     def logout():
         SIemail.set('')
+
 
     # for i in data:
     #         if (i["email"] == SIemail.get()):
@@ -714,6 +723,7 @@ def openEditInfo():
                 sAdd = i["address"]
                 break
     
+
     dob = sDOB.split('/')
     dd = int(dob[0])
     mm = int(dob[1])
@@ -859,8 +869,10 @@ def openConfirmSignFile():
     pass
 
 if __name__ == "__main__":
-    # openSignup()
-    openMenu()
+
+    openSignup()
+    #openMenu()
+
     #openGenerateKey()
     #del data
     
