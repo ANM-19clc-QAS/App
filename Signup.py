@@ -1,5 +1,10 @@
+from argparse import FileType
+from cgitb import text
 from datetime import datetime
+from select import select
+
 from tkinter import *
+from tkinter import filedialog
 from tkinter.ttk import *
 import json
 import tkinter as tk
@@ -11,16 +16,21 @@ from numpy import empty
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
+
+import os
+
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
 from tkinter import messagebox
-from datetime import datetime
+
+
 
 path = '/Users/anhquantran/Documents/GitHub/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
 data_file = open('user.txt').read()
+
 data = json.loads(data_file)
 
 #DO MANY FUNCTIONS
@@ -131,7 +141,9 @@ def openSignup():
         return SequenceMatcher(None, a, b).ratio()
 
     #load json file and store user's keys into dataKey
+
     with open('userkeys.txt') as fkin:
+
         dataKey = json.load(fkin)
 
     def valid_email(input):
@@ -392,10 +404,11 @@ def openMenu():
     def logout():
         SIemail.set('')
 
-    for i in data:
-            if (i["email"] == SIemail.get()):
-                lbWelcome = Label(winM, text="\nHi, "+i["name"]+"!  ",anchor=E).pack(fill='both')
-                break
+
+    # for i in data:
+    #         if (i["email"] == SIemail.get()):
+    #             lbWelcome = Label(winM, text="\nHi, "+i["name"]+"!  ",anchor=E).pack(fill='both')
+    #             break
 
     bLogout = tk.Button(winM, text='Log out',command=combine_funcs(logout,winM.destroy,openSignin))
     bLogout.place(x=610,y=35)
@@ -421,8 +434,92 @@ def openMenu():
     bConfirmSignFile = tk.Button(winM, font = ('Arial',18),text='Sign file',command=combine_funcs(winM.destroy,openConfirmSignFile),height=4,width=20)
     bConfirmSignFile.place(x=390, y=450)
 
+    bSendFile = tk.Button(winM, font = ('Arial',18),text='Send File',command=combine_funcs(winM.destroy,openSendFile),height=4,width=20)
+    bSendFile.place(x=390, y=600)
+
+    bDownFile = tk.Button(winM, font = ('Arial',18),text='List Download File',command=combine_funcs(winM.destroy,openListFile),height=4,width=20)
+    bDownFile.place(x=50, y=600)
     winM.mainloop()
 
+
+def openSendFile():
+    winEd = tk.Tk()
+    winEd.geometry("700x800")
+    winEd.title("Mã hóa")
+
+    def openFolder():
+        global filename
+        filename = path+'imgError.png'
+        # filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
+        # filename = filedialog.askopenfilename(multiple=True)
+        # print(filename)
+    def sender():
+        file = open(filename,'rb')
+        file_data = file.read(4098)
+        filename1 = path + "DB/" +filename.split('/')[-1]
+        f = open(filename1, "wb")
+        f.write(file_data)
+        f.close()
+        file.close()
+
+    lbTitle = Label(winEd, text="SEND FILE", font=('arial', 20))
+    lbTitle.place(x=250, y=70)
+
+    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
+
+    bChooseFile = Button(winEd,text='Choose File',command=openFolder)
+    bChooseFile.place(x=250,y=150)
+
+    bSend = Button(winEd,text='Send',command=sender)
+    bSend.place(x=250,y=500)
+
+
+def openListFile():
+    winEd = tk.Tk()
+    winEd.geometry("700x800")
+    winEd.title("Mã hóa")
+
+    listbox = Listbox(winEd,fg='blue')
+    listbox.pack(pady=15)
+
+    for i in os.listdir(path+'DB'):
+        listbox.insert(0,i)
+
+    def selectFile():
+        my_lbl.config(text=listbox.get(ANCHOR))
+    def saveFile():
+        file = filedialog.asksaveasfile(initialdir="/Users/son.n/Desktop/App/Store",
+                                        defaultextension='.txt',
+                                        filetypes=[
+                                            ("Text file",".txt"),
+                                            ("HTML file", ".html"),
+                                            ("All files", ".*"),
+                                        ])
+        if file is None:
+            return
+
+        f = open(filename,'rb')
+        file_data = f.read(4098)
+        # filetext = str(text.get(1.0,END))
+        #filetext = input("Enter some text I guess: ") //use this if you want to use console window
+        file.write(file_data)
+        f.close()
+        file.close()
+        
+
+    button = Button(text='save',command=saveFile)
+    button.pack()
+
+
+    bSelect = Button(winEd,text='Select',command=selectFile)
+    bSelect.pack(pady=10)
+
+    global my_lbl
+    my_lbl = Label(winEd,text='a')
+    my_lbl.pack(pady=5)
+
+    
 #EDIT INFORMATION
 def openEditInfo():
     winEd = tk.Tk()
@@ -626,6 +723,7 @@ def openEditInfo():
                 sAdd = i["address"]
                 break
     
+
     dob = sDOB.split('/')
     dd = int(dob[0])
     mm = int(dob[1])
@@ -771,8 +869,10 @@ def openConfirmSignFile():
     pass
 
 if __name__ == "__main__":
+
     openSignup()
     #openMenu()
+
     #openGenerateKey()
     #del data
     
