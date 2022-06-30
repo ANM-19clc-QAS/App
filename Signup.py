@@ -22,14 +22,18 @@ import binascii
 from tkinter import messagebox
 import base64
 
-#path = '/Users/anhquantran/Documents/GitHub/App/'
-path = ''
+path = '/Users/anhquantran/Documents/GitHub/App/'
+# path = '/home/nson/Desktop/App/'
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
-data_file = open('user.txt').read()
+data_file = open(path+'user.txt').read()
 
 data = json.loads(data_file)
+
+data_file = open(path+'userkeys.txt').read()
+
+data_key = json.loads(data_file)
 
 #DO MANY FUNCTIONS
 def combine_funcs(*funcs):
@@ -140,7 +144,7 @@ def openSignup():
 
     #load json file and store user's keys into dataKey
 
-    with open('userkeys.txt') as fkin:
+    with open(path+'userkeys.txt') as fkin:
         dataKey = json.load(fkin)
 
     def valid_email(input):
@@ -441,34 +445,69 @@ def openMenu():
 def openSendFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
-    winEd.title("Mã hóa")
+    winEd.title("SEND FILE")
+
+    listbox = Listbox(winEd,fg='blue')
+    listbox.pack(pady=10,padx=15)
+    listbox.xview = 20
+
+    global publickey_user_sender
+    publickey_user_sender = ''
+    
+    for i in data_key:
+        listbox.insert(0,i['email'])
+
+    def selectFile():
+        global publickey_user_sender
+
+        my_lbl.config(text=listbox.get(ANCHOR))
+        for i in data_key:
+            if i['email'] == listbox.get(ANCHOR):
+                publickey_user_sender = i['kpublic']
+                break
 
     def openFolder():
         global filename
         filename = 'imgError.png'
         filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
-        filename = filedialog.askopenfilename(multiple=True)
-        print(filename)
-    def sender():
-        file = open(filename,'rb')
-        file_data = file.read(4098)
-        filename1 = "DB/" +filename.split('/')[-1]
-        f = open(filename1, "wb")
-        f.write(file_data)
-        f.close()
-        file.close()
+        lbFilename.config(text=filename)
 
-    lbTitle = Label(winEd, text="SEND FILE", font=('arial', 20))
-    lbTitle.place(x=250, y=70)
+    def sender():
+        if len(filename) == 0 | len(publickey_user_sender) == 1:
+            print("Not select file or Not select sender")
+        else:
+            file = open(filename,'rb')
+            # content
+            file_data = file.read(4098)
+            # kpublic
+            print(publickey_user_sender)
+            filename1 = path + "DB/" +filename.split('/')[-1]
+            f = open(filename1, "wb")
+            f.write(file_data)
+            f.close()
+            file.close()
+            
+    bSelect = Button(winEd,text='Select Sender',command=selectFile)
+    bSelect.pack(pady=10)
+
+    global my_lbl
+    my_lbl = Label(winEd,text='........')
+    my_lbl.pack(pady=5)
+
+
+    global lbFilename
+
+    lbFilename = Label(winEd, font=('arial', 15),text='........')
+    lbFilename.place(x=250, y=400)
 
     bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
 
-    bChooseFile = Button(winEd,text='Choose File',command=openFolder)
-    bChooseFile.place(x=250,y=150)
+    bChooseFile = Button(winEd,text='Choose File Send',command=openFolder)
+    bChooseFile.place(x=300,y=300)
 
     bSend = Button(winEd,text='Send',command=sender)
-    bSend.place(x=250,y=500)
+    bSend.place(x=300,y=500)
 
 
 def openListFile():
@@ -502,7 +541,8 @@ def openListFile():
         f.close()
         file.close()
         
-
+    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
     button = Button(text='save',command=saveFile)
     button.pack()
 
@@ -846,9 +886,9 @@ def openConfirmPass():
     def checkAccount():
         for i in data:
             print(i["email"])
-            # if ((i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get())==FALSE):
-            #     messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
-            #     break
+            if ((i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get())==FALSE):
+                messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
+                break
             if (i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get()):
                 print(i["email"])
                 messagebox.showinfo('Edit information','Your passphrase is correct!')
@@ -896,7 +936,7 @@ def openConfirmSignFile():
 if __name__ == "__main__":
 
     openSignup()
-    #openMenu()
+    # openMenu()
 
     #openGenerateKey()
     #del data
