@@ -2,7 +2,6 @@ from argparse import FileType
 from cgitb import text
 from datetime import datetime
 from select import select
-
 from tkinter import *
 from tkinter import filedialog
 from tkinter.ttk import *
@@ -18,38 +17,35 @@ import rsa
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
-
 import os
-
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
+import binascii
 from tkinter import messagebox
+import base64
 
 
-
-<<<<<<< Updated upstream
-path = '/Users/anhquantran/Documents/GitHub/App/'
-=======
 # path = '/Users/anhquantran/Documents/GitHub/App/'
 path = '/Users/son.n/Documents/GitHub/App/App/'
->>>>>>> Stashed changes
+# path = '/home/nson/Desktop/App/'
+
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
-data_file = open('user.txt').read()
+data_file = open(path+'user.txt').read()
 
 data = json.loads(data_file)
 
-<<<<<<< Updated upstream
-=======
+
 data_file = open(path+'userkeys.txt').read()
 
 data_key = json.loads(data_file)
 
+
 class User(object):
         def __init__(self, email):
             self.email = email
->>>>>>> Stashed changes
+
 #DO MANY FUNCTIONS
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
@@ -159,8 +155,7 @@ def openSignup():
 
     #load json file and store user's keys into dataKey
 
-    with open('userkeys.txt') as fkin:
-
+    with open(path+'userkeys.txt') as fkin:
         dataKey = json.load(fkin)
 
     def valid_email(input):
@@ -421,7 +416,6 @@ def openMenu():
     def logout():
         SIemail.set('')
 
-
     # for i in data:
     #         if (i["email"] == SIemail.get()):
     #             lbWelcome = Label(winM, text="\nHi, "+i["name"]+"!  ",anchor=E).pack(fill='both')
@@ -462,34 +456,69 @@ def openMenu():
 def openSendFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
-    winEd.title("Mã hóa")
+    winEd.title("SEND FILE")
+
+    listbox = Listbox(winEd,fg='blue')
+    listbox.pack(pady=10,padx=15)
+    listbox.xview = 20
+
+    global publickey_user_sender
+    publickey_user_sender = ''
+    
+    for i in data_key:
+        listbox.insert(0,i['email'])
+
+    def selectFile():
+        global publickey_user_sender
+
+        my_lbl.config(text=listbox.get(ANCHOR))
+        for i in data_key:
+            if i['email'] == listbox.get(ANCHOR):
+                publickey_user_sender = i['kpublic']
+                break
 
     def openFolder():
         global filename
-        filename = path+'imgError.png'
-        # filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
-        # filename = filedialog.askopenfilename(multiple=True)
-        # print(filename)
-    def sender():
-        file = open(filename,'rb')
-        file_data = file.read(4098)
-        filename1 = path + "DB/" +filename.split('/')[-1]
-        f = open(filename1, "wb")
-        f.write(file_data)
-        f.close()
-        file.close()
+        filename = 'imgError.png'
+        filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
+        lbFilename.config(text=filename)
 
-    lbTitle = Label(winEd, text="SEND FILE", font=('arial', 20))
-    lbTitle.place(x=250, y=70)
+    def sender():
+        if len(filename) == 0 | len(publickey_user_sender) == 1:
+            print("Not select file or Not select sender")
+        else:
+            file = open(filename,'rb')
+            # content
+            file_data = file.read(4098)
+            # kpublic
+            print(publickey_user_sender)
+            filename1 = path + "DB/" +filename.split('/')[-1]
+            f = open(filename1, "wb")
+            f.write(file_data)
+            f.close()
+            file.close()
+            
+    bSelect = Button(winEd,text='Select Sender',command=selectFile)
+    bSelect.pack(pady=10)
+
+    global my_lbl
+    my_lbl = Label(winEd,text='........')
+    my_lbl.pack(pady=5)
+
+
+    global lbFilename
+
+    lbFilename = Label(winEd, font=('arial', 15),text='........')
+    lbFilename.place(x=250, y=400)
 
     bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
 
-    bChooseFile = Button(winEd,text='Choose File',command=openFolder)
-    bChooseFile.place(x=250,y=150)
+    bChooseFile = Button(winEd,text='Choose File Send',command=openFolder)
+    bChooseFile.place(x=300,y=300)
 
     bSend = Button(winEd,text='Send',command=sender)
-    bSend.place(x=250,y=500)
+    bSend.place(x=300,y=500)
 
 
 def openListFile():
@@ -506,8 +535,7 @@ def openListFile():
     def selectFile():
         my_lbl.config(text=listbox.get(ANCHOR))
     def saveFile():
-        file = filedialog.asksaveasfile(initialdir="/Users/son.n/Desktop/App/Store",
-                                        defaultextension='.txt',
+        file = filedialog.asksaveasfile(defaultextension='.txt',
                                         filetypes=[
                                             ("Text file",".txt"),
                                             ("HTML file", ".html"),
@@ -524,7 +552,8 @@ def openListFile():
         f.close()
         file.close()
         
-
+    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
     button = Button(text='save',command=saveFile)
     button.pack()
 
@@ -740,11 +769,11 @@ def openEditInfo():
                 sAdd = i["address"]
                 break
     
-
     dob = sDOB.split('/')
     dd = int(dob[0])
     mm = int(dob[1])
     yyyy = int(dob[2])
+
     #Entry for Edit Info
     eEmail = Entry(winEd,width=25,font = ('Arial',15))
     eEmail.insert(0,sEmail)
@@ -787,7 +816,8 @@ def openEditInfo():
 def openGenerateKey():
     random_generator = Random.new().read
     key = RSA.generate(2048,random_generator)
-    privkey, pubkey = key.exportKey().splitlines()[1:-1], key.publickey().exportKey().splitlines()[1:-1]
+    privkey, pubkey = key, key.public_key()
+    privkeyPEM, pubkeyPEM = privkey.exportKey().decode('ascii'), pubkey.exportKey().decode('ascii')
 
     winGen = tk.Tk()
     winGen.geometry("700x700")
@@ -800,23 +830,52 @@ def openGenerateKey():
     lbPriv = Label(winGen, text="Private key", font=('arial', 15))
     lbPriv.place(x=50, y=350)
 
+    def GererateKey():
+        btnGetKey.config(state=DISABLED)
+        ePub.insert(END,pubkeyPEM)
+        ePub.config(state=DISABLED)
+        ePriv.insert(END,privkeyPEM)
+        ePriv.config(state=DISABLED)  
+        for i in dataKey:
+            if (i["email"] == SIemail.get()):
+                i["kprivate"] = str(privkeyPEM)
+                i["kpublic"] = str(pubkeyPEM)
+                break
+
+        with open('userkeys.txt', 'w') as fout:
+            json.dump(dataKey, fout, indent=4, separators=(',',': '))
+        
+        fout.close()
+    
+    def successGen():
+        messagebox.showinfo('GENERATE KEYS', 'Your keys have been saved!')
+
+    with open('userkeys.txt') as fkin:
+        dataKey = json.load(fkin)
+    with open('userkeys.txt','w') as fk:
+        json.dump(dataKey, fk, indent=4, separators=(',',': '))
+
     ePub = Text(winGen,font = ('Arial',15), width=40)
     ePub.place(x=180, y=100,width=450, height=200)
 
     ePriv = Text(winGen,font = ('Arial',15), width=40)
     ePriv.place(x=180, y=350,width=450, height=200)
 
-    def GererateKey():
-        ePub.insert(END,pubkey)
-        ePub.config(state=DISABLED)
-        ePriv.insert(END,privkey)
-        ePriv.config(state=DISABLED)
-
-    btnGetKey = Button(master = winGen,text = 'GERERATE KEY',command= GererateKey)
+    btnGetKey = Button(master = winGen,text = 'GERERATE KEY',command=combine_funcs(GererateKey,successGen))
     btnGetKey.place(x=400, y=600)
 
     btnBack = Button(winGen, text = 'BACK',command=combine_funcs(winGen.destroy,openMenu))
     btnBack.place(x=200, y=600)
+
+    for i in dataKey:
+        if (i["email"] == SIemail.get()):
+            if(i["kprivate"] != "" or i["kpublic"] != ""):
+                ePub.insert(END,i["kpublic"])
+                ePub.config(state=DISABLED)
+                ePriv.insert(END,i["kprivate"])
+                ePriv.config(state=DISABLED)
+                btnGetKey.config(state=DISABLED)
+            break
 
     winGen.mainloop()
 
@@ -838,9 +897,9 @@ def openConfirmPass():
     def checkAccount():
         for i in data:
             print(i["email"])
-            # if ((i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get())==FALSE):
-            #     messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
-            #     break
+            if ((i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get())==FALSE):
+                messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
+                break
             if (i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get()):
                 print(i["email"])
                 messagebox.showinfo('Edit information','Your passphrase is correct!')
@@ -1017,13 +1076,8 @@ def openConfirmSignFile():
 
 if __name__ == "__main__":
 
-<<<<<<< Updated upstream
     openSignup()
     #openMenu()
-=======
-    # openSignup()
-    openMenu()
->>>>>>> Stashed changes
 
     #openGenerateKey()
     #del data
