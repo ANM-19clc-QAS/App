@@ -1,15 +1,11 @@
-import Crypto
-from Crypto.PublicKey import RSA
-from Crypto import Random
+from Cryptodome.PublicKey import RSA
+from Cryptodome import Random
 import rsa
 from tkinter import *
 from tkinter.ttk import *
-from tkinter import messagebox
-import json
 from numpy import size
 import tkinter as tk
-import re
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 import base64
 import hashlib
 import random
