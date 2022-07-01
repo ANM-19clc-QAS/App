@@ -94,5 +94,13 @@
         "phone": "0982322471",
         "address": "2545 QL14",
         "passphrase": "36bf859a3ac8a2ef2dce7c4bcb8b447920458531a607acfa9a763acd14f75aea:781ee997c7054a0f95fac130fcd5aaaa"
+    },
+    {
+        "email": "nguyenson10b12@gmail.com",
+        "name": "nguyen son",
+        "dob": "12/12/2001",
+        "phone": "1974293748",
+        "address": "41/1 AP ",
+        "passphrase": "14ccf006f6d90371933a1a24e3c3280484e3ca55fdf489d517a50acb6adfaa43:0da003ebc0704622819470f8bf0dcc73"
     }
 ]
