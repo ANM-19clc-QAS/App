@@ -13,6 +13,8 @@ import hashlib
 from tokenize import String
 import uuid
 from numpy import empty
+from regex import F
+import rsa
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
@@ -25,7 +27,12 @@ from tkinter import messagebox
 
 
 
+<<<<<<< Updated upstream
 path = '/Users/anhquantran/Documents/GitHub/App/'
+=======
+# path = '/Users/anhquantran/Documents/GitHub/App/'
+path = '/Users/son.n/Documents/GitHub/App/App/'
+>>>>>>> Stashed changes
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
@@ -33,6 +40,16 @@ data_file = open('user.txt').read()
 
 data = json.loads(data_file)
 
+<<<<<<< Updated upstream
+=======
+data_file = open(path+'userkeys.txt').read()
+
+data_key = json.loads(data_file)
+
+class User(object):
+        def __init__(self, email):
+            self.email = email
+>>>>>>> Stashed changes
 #DO MANY FUNCTIONS
 def combine_funcs(*funcs):
     def combined_func(*args, **kwargs):
@@ -47,19 +64,17 @@ def openSignin():
     winsi.geometry("500x300")
     winsi.title("Mã hóa")
 
-    #SIGN IN screen
-    users = {}
-    users['user'] = []
+    # #SIGN IN screen
+    # users = {}
+    # users['user'] = []
 
-    class User(object):
-        def __init__(self, email, passphrase):
-            self.email = email
-            self.passphrase = passphrase
+  
+    
 
-    def object_decoder(obj):
-        #print(obj['email'] + obj['email'])
-        if 'email' in obj and 'passphrase' in obj:
-            users['user'].append(User(obj['name'], obj['passphrase'])) 
+    # def object_decoder(obj):
+    #     #print(obj['email'] + obj['email'])
+    #     if 'email' in obj and 'passphrase' in obj:
+    #         users['user'].append(User(obj['name'], obj['passphrase'])) 
 
     def valid_signin_email(input):
         if(re.search(regex_email,input) and input.isalpha):
@@ -77,6 +92,8 @@ def openSignin():
         for i in data:
             if (i["email"] == SIemail.get()) & check_password(i['passphrase'],SIpassphrase.get()):
                 siEmail = i["email"]
+                global curent_user
+                curent_user = siEmail
                 success_signin()
                 winsi.destroy()
                 openMenu()
@@ -431,7 +448,7 @@ def openMenu():
     bSignFile = tk.Button(winM, font = ('Arial',18),text='Sign file',command=combine_funcs(winM.destroy,openSignFile),height=4,width=20)
     bSignFile.place(x=390, y=300)
 
-    bConfirmSignFile = tk.Button(winM, font = ('Arial',18),text='Sign file',command=combine_funcs(winM.destroy,openConfirmSignFile),height=4,width=20)
+    bConfirmSignFile = tk.Button(winM, font = ('Arial',18),text='Confirm sign file',command=combine_funcs(winM.destroy,openConfirmSignFile),height=4,width=20)
     bConfirmSignFile.place(x=390, y=450)
 
     bSendFile = tk.Button(winM, font = ('Arial',18),text='Send File',command=combine_funcs(winM.destroy,openSendFile),height=4,width=20)
@@ -864,14 +881,149 @@ def openEncodeFile():
 def openDecodeFile():
     pass
 def openSignFile():
-    pass
+    winEd = tk.Tk()
+    winEd.geometry("700x800")
+    winEd.title("SEND FILE")
+
+
+    # # sign file 
+    for i in data_key:
+        if i['email'] == curent_user:
+            global kprivate_user_sender
+            kprivate_user_sender = rsa.PrivateKey.load_pkcs1(i['kprivate'])
+            break
+
+    def openFolder():
+        global filename
+        filename = path + 'sample.doc'
+        # filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
+        lbFilename.config(text=filename)
+
+    def sender():
+        file = open(filename,'rb')
+        # content
+        file_data = file.read(4098)
+        #sha-256
+        file_data = rsa.compute_hash(file_data,'SHA-256')
+        #sign file sha-256
+        signature = rsa.sign(file_data,kprivate_user_sender,'SHA-256')
+        #save sign file
+        s = open(path+'Sign/'+filename.split('/')[-1]+'.sig','wb')
+        s.write(signature)
+       
+        filename1 = path + "Sign/" +filename.split('/')[-1]
+        f = open(filename1, "wb")
+        f.write(file_data)
+
+        s.close()
+        f.close()
+        file.close()
+
+            
+            
+
+
+    global lbFilename
+    lbFilename = Label(winEd, font=('arial', 15),text='........')
+    lbFilename.place(x=250, y=400)
+
+    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
+
+    bChooseFile = Button(winEd,text='Choose File Send',command=openFolder)
+    bChooseFile.place(x=250,y=450)
+
+    bSend = Button(winEd,text='Send',command=sender)
+    bSend.place(x=300,y=500)
+
 def openConfirmSignFile():
-    pass
+    winEd = tk.Tk()
+    winEd.geometry("700x800")
+    winEd.title("SEND FILE")
+
+    listbox = Listbox(winEd,fg='blue')
+    listbox.pack(pady=10,padx=15)
+    listbox.xview = 20
+
+
+    listbox1 = Listbox(winEd,fg='blue')
+
+
+    # # sign file 
+    
+    
+    def selectFile():
+        my_lbl.config(text=listbox.get(ANCHOR))
+        global file
+        file = listbox.get(ANCHOR)
+    def selectSign():
+        my_lbl1.config(text=listbox1.get(ANCHOR))
+        global sign
+        sign = listbox1.get(ANCHOR)
+
+
+    def confirm():
+        for i in data_key:
+            kpublic_user_sender = rsa.PublicKey.load_pkcs1(i['kpublic'])
+            f = open(file).read()
+            s = open(sign).read()
+            try:
+                rsa.verify(f,s,kpublic_user_sender)
+                print(0)
+            except:
+                print(1)
+
+            f.close()
+            s.close()
+
+
+    for i in os.listdir(path+'Sign'):
+        k = i.split('.')
+        if k[-1] == 'sig':
+            listbox1.insert(0,i)
+        else:
+            listbox.insert(0,i)
+       
+    bSelect = Button(winEd,text='Select File',command=selectFile)
+    bSelect.pack(pady=10)
+
+    global my_lbl
+    my_lbl = Label(winEd,text='........')
+    my_lbl.pack(pady=5)
+
+    listbox1.pack(pady=10,padx=15)
+    listbox1.xview = 20
+    
+
+    bSelect1 = Button(winEd,text='Select Sign',command=selectSign)
+    bSelect1.pack(pady=10)
+
+    global my_lbl1
+    my_lbl1 = Label(winEd,text='........')
+    my_lbl1.pack(pady=5)
+
+    global my_lbl2
+    my_lbl2 = Label(winEd,text='........')
+    my_lbl2.pack(pady=5)
+
+
+    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
+
+
+    bSend = Button(winEd,text='Confirm',command=confirm)
+    bSend.place(x=300,y=700)
+
 
 if __name__ == "__main__":
 
+<<<<<<< Updated upstream
     openSignup()
     #openMenu()
+=======
+    # openSignup()
+    openMenu()
+>>>>>>> Stashed changes
 
     #openGenerateKey()
     #del data
