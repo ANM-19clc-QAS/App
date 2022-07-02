@@ -8,99 +8,11 @@
         "passphrase": "43cf239ee7b0b7d3949f1e95d946441f43c216e4270dd4d9fac13d36390beaf1:7c1c2da320b347c2af53f2f7d695c156"
     },
     {
-        "email": "bobogk14@gmail.com",
-        "name": "Trinh Van Quyet",
-        "dob": "17/06/2022",
-        "phone": "0876777333",
+        "email": "test@gmail.com",
+        "name": "Tran Van Test",
+        "dob": "02/07/2022",
+        "phone": "0123456789",
         "address": "10 Pho Quang",
-        "passphrase": "e45e8c07fe70a95adee763b4879d602ed1787d9f67f3ddb823ccc7228fbc9813:6bb3c5444c3944bfb64400a6797b9db3"
-    },
-    {
-        "email": "chaoconmua@gmail.com",
-        "name": "Nguyen Xuan Vu",
-        "dob": "17/02/2002",
-        "phone": "0977444222",
-        "address": "227 Nguyen Van Cu",
-        "passphrase": "2568f683ea2c71d4873feaef996637983c865105b36d3d099514610704c3000f:d89fd46026294c1db4edbb3d675164c9"
-    },
-    {
-        "email": "testerqc@gmail.com",
-        "name": "Dang Thi Lan",
-        "dob": "17/06/2022",
-        "phone": "0977665544",
-        "address": "33 THD",
-        "passphrase": "6684070963f79026eeb5c43521ca90d8f68db8fd369afd9e23ddf6196e7d5655:530febbbcbda4aa4b0f2239dddf9250d"
-    },
-    {
-        "email": "hoangdung@outlook.com",
-        "name": "Hoang Dung",
-        "dob": "17/06/2022",
-        "phone": "0877744432",
-        "address": "77 NVL",
-        "passphrase": "80432cafd592aa04eb401adfe2f4e2ba5a1d2c3f4836f7132d12b39fa6984864:1afbacb6830e4e9fa7c5e2a20b4476d8"
-    },
-    {
-        "email": "doantrinh@gmail.com",
-        "name": "Doan Trinh Nguyen",
-        "dob": "27/07/2001",
-        "phone": "0977559933",
-        "address": "10 LTK",
-        "passphrase": "d4993f50e76933cedc136e0424e3ab506715c951429937faac39fdb623f4d166:a5852f5bf8e24ee596acc20d0606e84d"
-    },
-    {
-        "email": "khanhvan@uni.com",
-        "name": "Khanh Van Nguyen",
-        "dob": "17/06/2022",
-        "phone": "0766338993",
-        "address": "10 DBP",
-        "passphrase": "ce60c9e5541fdba05e48ab5fa0f40c68c8c1d8650efbca0d652f7060e3f44610:2d8c252d431b4f00bb928cbd137c6c43"
-    },
-    {
-        "email": "kimduyen@uni.com",
-        "name": "Kim Duyen Nguyen",
-        "dob": "17/06/2022",
-        "phone": "0977388494",
-        "address": "11 DBP",
-        "passphrase": "e5b524a61a95d9877bb7b2399ac3b63e9440155aa98f7900c7979dc65f1d8a1f:b3698c0f17af4378b026c1679fa68adc"
-    },
-    {
-        "email": "thuyvan@uni.com",
-        "name": "Thuy Van Nguyen",
-        "dob": "17/06/2022",
-        "phone": "0977485953",
-        "address": "12 DBP",
-        "passphrase": "61426c407872c1c7bcee730ccd39d03377b84a9ee5b4863c9e16496253f3f473:d67c1a4a034b4e308ced7defbfda1694"
-    },
-    {
-        "email": "momo@gmail.com",
-        "name": "Thach Thi Ha",
-        "dob": "17/06/2022",
-        "phone": "0977637274",
-        "address": "2545 QL14",
-        "passphrase": "011a0ccdd40903542b3c8bf453f0a9019d2db201f7ffc59ebcd6a9f461e3ba1a:f6a91c04412e43df9efe87d8646ca964"
-    },
-    {
-        "email": "khtn@gmail.com",
-        "name": "Khoa Hoc Tu Nhien",
-        "dob": "6/18/22",
-        "phone": "0283666444",
-        "address": "227 NVC",
-        "passphrase": "57a6517898264efde3f98def7d0a614a73570413a7c3d2c10cd3e7093ea2f25a:434fbba5e1d74347a95d21485cd9fca8"
-    },
-    {
-        "email": "dangnhan@gmail.com",
-        "name": "Dang Hong Nhan",
-        "dob": "19/05/1975",
-        "phone": "0982322472",
-        "address": "2545 QL14",
-        "passphrase": "36bf859a3ac8a2ef2dce7c4bcb8b447920458531a607acfa9a763acd14f75aea:781ee997c7054a0f95fac130fcd5aaaa"
-    },
-    {
-        "email": "nguyenson10b12@gmail.com",
-        "name": "nguyen son",
-        "dob": "12/12/2001",
-        "phone": "1974293748",
-        "address": "41/1 AP ",
-        "passphrase": "14ccf006f6d90371933a1a24e3c3280484e3ca55fdf489d517a50acb6adfaa43:0da003ebc0704622819470f8bf0dcc73"
+        "passphrase": "bb2604966ca638dbf2a5b29277c535f01fb5376466d7b34e9770d990b85e7c0e:6085f0a1b26b477e9e2aea816ea91ea4"
     }
 ]

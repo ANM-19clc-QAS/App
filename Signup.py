@@ -82,13 +82,17 @@ def openSignin():
                 global curent_user
                 curent_user = siEmail
                 success_signin()
-                winsi.destroy()
                 for j in data_key:
                     if(j["email"]==SIemail.get()):
                         if(j["kprivate"]==''):
+                            winsi.destroy()
                             openGenerateKey()
+                            break
                         else: 
+                            winsi.destroy()
                             openMenu()
+                            break
+                break           
             else:
                 SInotification.set("Not Right Password or Email")
         
@@ -719,17 +723,20 @@ def openEditInfo():
             if (i["email"] == SIemail.get()):
                 if(ePassphrase.get()!=''):
                     #Get old kprivate - decrypt kprivate
-                    aes = pyaes.AESModeOfOperationCTR(i["ksecret"], pyaes.Counter(iv))
+                    
+                    aes = pyaes.AESModeOfOperationCTR(str.encode(i["ksecret"]), pyaes.Counter(int(i["iv"])))
                     kPrivate_dec = aes.decrypt(i["kprivate"])
 
                     #Encrypt kprivate with new passphrase
+                    iv_new = secrets.randbits(256)
                     passwordSalt = os.urandom(16)
                     kSecret_new = pbkdf2.PBKDF2(hash_object.hexdigest(), passwordSalt).read(32)
                     print('AES encryption key:', binascii.hexlify(kSecret_new))
 
-                    iv = secrets.randbits(256)
-                    aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv))
+                    
+                    aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv_new))
                     i["kprivate"] = aes.encrypt(str(kPrivate_dec))
+                    i["iv"] = str(iv_new)
 
         with open('user.txt', 'w') as fout:
             json.dump(data, fout, indent=4, separators=(',',': '))
@@ -840,8 +847,8 @@ def openGenerateKey():
     def GererateKey():
         #Generate RSA key pair
         random_generator = Random.new().read
-        key = RSA.generate(2048,random_generator)
-        privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
+        (pubkey, privkey) = rsa.newkeys(2048)
+        #privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
 
         #Encrypt Kprivate
         for i in data:
@@ -876,9 +883,10 @@ def openGenerateKey():
 
         for i in dataKey:
             if (i["email"] == SIemail.get()):
-                i["kprivate"] = str(binascii.hexlify(ciphertext))
+                i["kprivate"] = str(ciphertext)
                 i["kpublic"] = str(pubkey)
-                i["ksecret"] = str(binascii.hexlify(kSecret))
+                i["ksecret"] = str(kSecret)
+                i["iv"] = iv
                 break
 
         with open('userkeys.txt', 'w') as fout:

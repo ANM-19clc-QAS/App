@@ -50,6 +50,7 @@ iv = secrets.randbits(256)
 aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
 ciphertext = aes.encrypt(str(privkey))
 print('Encrypted:', binascii.hexlify(ciphertext))
+print(type(ciphertext))
 
 # Decrypt
 aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
@@ -68,19 +69,18 @@ def random_session(length):
 kSession = random_session(16)
 
 # Encrypt file
-f = open("App/filename.txt")
+f = open("filename.txt")
 text = f.read()
 fpasswordSalt = os.urandom(16)
 fkey = pbkdf2.PBKDF2(text, passwordSalt).read(32) #passwordSalt hay fpasswordSalt?
 print('AES encryption key:', binascii.hexlify(fkey))
 
 fiv = secrets.randbits(256)
-faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(iv))
+faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(iv)) #iv hay fiv
 fciphertext = faes.encrypt(text)
 print('Encrypted:', binascii.hexlify(fciphertext))
 
-
-faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(iv))
+faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(iv)) #iv hay fiv
 fdecrypted = faes.decrypt(fciphertext)
 print()
 print('Decrypted:', fdecrypted)
@@ -101,7 +101,5 @@ def decrypt(ciphertext, key):
 
 plaintext = decrypt(ciphertext, privkey)
 print(plaintext)
-
-
 
 window.mainloop()
