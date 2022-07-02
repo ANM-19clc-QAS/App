@@ -5,24 +5,17 @@ from select import select
 from tkinter import *
 from tkinter import filedialog
 from tkinter.ttk import *
-import json
 import tkinter as tk
-import re
-import hashlib
 from tokenize import String
-import uuid
 from numpy import empty
 from regex import F
-import rsa
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
-import os
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
-import binascii
 from tkinter import messagebox
-import base64
+import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid
 
 
 path = '/Users/anhquantran/Documents/GitHub/App/'
@@ -90,15 +83,18 @@ def openSignin():
                 curent_user = siEmail
                 success_signin()
                 winsi.destroy()
-                openMenu()
-                break
+                for j in data_key:
+                    if(j["email"]==SIemail.get()):
+                        if(j["kprivate"]==''):
+                            openGenerateKey()
+                        else: 
+                            openMenu()
             else:
                 SInotification.set("Not Right Password or Email")
         
     def success_signin():
         messagebox.showinfo('Sign in', 'You have successfully sign in!')
         
-
     def showPassIn():
         if(cShow_vin.get()==1):
             eSIpassphrase.config(show='')
@@ -718,6 +714,22 @@ def openEditInfo():
                 i["address"] = eAddress.get()
                 if(ePassphrase.get()!=''):
                     i["passphrase"] = hash_object.hexdigest()+':'+salt
+        
+        for i in data_key:
+            if (i["email"] == SIemail.get()):
+                if(ePassphrase.get()!=''):
+                    #Get old kprivate - decrypt kprivate
+                    aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+                    kPrivate_dec = aes.decrypt(i["kprivate"])
+
+                    #Encrypt kprivate with new passphrase
+                    passwordSalt = os.urandom(16)
+                    kSecrect = pbkdf2.PBKDF2(hash_object.hexdigest(), passwordSalt).read(32)
+                    print('AES encryption key:', binascii.hexlify(kSecrect))
+
+                    iv = secrets.randbits(256)
+                    aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+                    i["kprivate"] = aes.encrypt(str(kPrivate_dec))
 
         with open('user.txt', 'w') as fout:
             json.dump(data, fout, indent=4, separators=(',',': '))
@@ -809,10 +821,12 @@ def openEditInfo():
 
 #GENERATE RSA KEYS
 def openGenerateKey():
-    random_generator = Random.new().read
-    key = RSA.generate(2048,random_generator)
-    privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
+    global key
+    global privkey
+    global pubkey
+    global ciphertext
 
+    #UI
     winGen = tk.Tk()
     winGen.geometry("700x700")
     winGen.title("Mã hóa")
@@ -825,14 +839,44 @@ def openGenerateKey():
     lbPriv.place(x=50, y=350)
 
     def GererateKey():
+        #Generate RSA key pair
+        random_generator = Random.new().read
+        key = RSA.generate(2048,random_generator)
+        privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
+
+        #Encrypt Kprivate
+        for i in data:
+            if(i["email"]==str(SIemail.get())):
+                passphrase, salt = i["passphrase"].split(':')
+                passwordSalt = os.urandom(16)
+                kSecrect = pbkdf2.PBKDF2(passphrase, passwordSalt).read(32)
+                #print('AES encryption key:', binascii.hexlify(kSecrect))
+                break
+
+        iv = secrets.randbits(256)
+        aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+        ciphertext = aes.encrypt(str(privkey))
+        #print('Encrypted:', binascii.hexlify(ciphertext))
+
+        #Decrypt Kprivate
+        #aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+        #decrypted = aes.decrypt(ciphertext)
+        # print()
+        # print('Decrypted:', decrypted)
+
         btnGetKey.config(state=DISABLED)
         ePub.insert(END,pubkey)
         ePub.config(state=DISABLED)
-        ePriv.insert(END,privkey)
-        ePriv.config(state=DISABLED)  
+        ePriv.insert(END,binascii.hexlify(ciphertext))
+        ePriv.config(state=DISABLED) 
+        btnBack.config(state=ACTIVE) 
+
+        with open(path+'userkeys.txt') as fkin:
+            dataKey = json.load(fkin)
+
         for i in dataKey:
             if (i["email"] == SIemail.get()):
-                i["kprivate"] = str(privkey)
+                i["kprivate"] = str(binascii.hexlify(ciphertext))
                 i["kpublic"] = str(pubkey)
                 break
 
@@ -842,7 +886,7 @@ def openGenerateKey():
         fout.close()
     
     def successGen():
-        messagebox.showinfo('GENERATE KEYS', 'Your keys have been saved!')
+        messagebox.showinfo('GENERATE KEYS', 'Your keys have been saved!')\
 
     with open('userkeys.txt') as fkin:
         dataKey = json.load(fkin)
@@ -859,7 +903,14 @@ def openGenerateKey():
     btnGetKey.place(x=400, y=600)
 
     btnBack = Button(winGen, text = 'BACK',command=combine_funcs(winGen.destroy,openMenu))
+    btnBack.config(state=ACTIVE)
+    state = str(btnGetKey['state'])
+    if(state != 'DISABLED'):
+        btnBack.config(state=DISABLED)
     btnBack.place(x=200, y=600)
+
+    with open(path+'userkeys.txt') as fkin:
+            dataKey = json.load(fkin)
 
     for i in dataKey:
         if (i["email"] == SIemail.get()):
@@ -870,6 +921,8 @@ def openGenerateKey():
                 ePriv.config(state=DISABLED)
                 btnGetKey.config(state=DISABLED)
             break
+    
+    fkin.close()
 
     winGen.mainloop()
 
