@@ -71,7 +71,7 @@ kSession = random_session(16)
 f = open("App/filename.txt")
 text = f.read()
 fpasswordSalt = os.urandom(16)
-fkey = pbkdf2.PBKDF2(text, passwordSalt).read(32)
+fkey = pbkdf2.PBKDF2(text, passwordSalt).read(32) #passwordSalt hay fpasswordSalt?
 print('AES encryption key:', binascii.hexlify(fkey))
 
 fiv = secrets.randbits(256)

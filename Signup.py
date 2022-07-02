@@ -15,7 +15,7 @@ import datetime as dt
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
 from tkinter import messagebox
-import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid
+import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid, random
 
 
 path = '/Users/anhquantran/Documents/GitHub/App/'
@@ -148,7 +148,6 @@ def openSignup():
         return SequenceMatcher(None, a, b).ratio()
 
     #load json file and store user's keys into dataKey
-
     with open(path+'userkeys.txt') as fkin:
         dataKey = json.load(fkin)
 
@@ -322,6 +321,7 @@ def openSignup():
             'kprivate': '',
             'kpublic': '',
             'ksecret': '',
+            'iv':'',
             'ksession': ''
         })
 
@@ -557,7 +557,7 @@ def openListFile():
     my_lbl = Label(winEd,text='a')
     my_lbl.pack(pady=5)
     
-#EDIT INFORMATION
+#EDIT INFORMATION (DONE)
 def openEditInfo():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -719,16 +719,16 @@ def openEditInfo():
             if (i["email"] == SIemail.get()):
                 if(ePassphrase.get()!=''):
                     #Get old kprivate - decrypt kprivate
-                    aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+                    aes = pyaes.AESModeOfOperationCTR(i["ksecret"], pyaes.Counter(iv))
                     kPrivate_dec = aes.decrypt(i["kprivate"])
 
                     #Encrypt kprivate with new passphrase
                     passwordSalt = os.urandom(16)
-                    kSecrect = pbkdf2.PBKDF2(hash_object.hexdigest(), passwordSalt).read(32)
-                    print('AES encryption key:', binascii.hexlify(kSecrect))
+                    kSecret_new = pbkdf2.PBKDF2(hash_object.hexdigest(), passwordSalt).read(32)
+                    print('AES encryption key:', binascii.hexlify(kSecret_new))
 
                     iv = secrets.randbits(256)
-                    aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+                    aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv))
                     i["kprivate"] = aes.encrypt(str(kPrivate_dec))
 
         with open('user.txt', 'w') as fout:
@@ -748,7 +748,6 @@ def openEditInfo():
             ePassphrase.config(show='*')
 
     #Label for Edit info
-    
     lbEmail = Label(winEd, text='Email',font=('arial',15))
     lbEmail.place(x = 150,y = 150)
     lbName = Label(winEd, text='Full Name',font=('arial',15))
@@ -819,7 +818,7 @@ def openEditInfo():
     btnBack = Button(winEd, text = 'BACK',command=combine_funcs(winEd.destroy,openMenu))
     btnBack.place(x=380, y=600)
 
-#GENERATE RSA KEYS
+#GENERATE RSA KEYS (DONE)
 def openGenerateKey():
     global key
     global privkey
@@ -849,17 +848,18 @@ def openGenerateKey():
             if(i["email"]==str(SIemail.get())):
                 passphrase, salt = i["passphrase"].split(':')
                 passwordSalt = os.urandom(16)
-                kSecrect = pbkdf2.PBKDF2(passphrase, passwordSalt).read(32)
+                kSecret = pbkdf2.PBKDF2(passphrase, passwordSalt).read(32)
                 #print('AES encryption key:', binascii.hexlify(kSecrect))
                 break
 
         iv = secrets.randbits(256)
-        aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+        aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
         ciphertext = aes.encrypt(str(privkey))
         #print('Encrypted:', binascii.hexlify(ciphertext))
 
+
         #Decrypt Kprivate
-        #aes = pyaes.AESModeOfOperationCTR(kSecrect, pyaes.Counter(iv))
+        #aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
         #decrypted = aes.decrypt(ciphertext)
         # print()
         # print('Decrypted:', decrypted)
@@ -878,6 +878,7 @@ def openGenerateKey():
             if (i["email"] == SIemail.get()):
                 i["kprivate"] = str(binascii.hexlify(ciphertext))
                 i["kpublic"] = str(pubkey)
+                i["ksecret"] = str(binascii.hexlify(kSecret))
                 break
 
         with open('userkeys.txt', 'w') as fout:
@@ -903,10 +904,7 @@ def openGenerateKey():
     btnGetKey.place(x=400, y=600)
 
     btnBack = Button(winGen, text = 'BACK',command=combine_funcs(winGen.destroy,openMenu))
-    btnBack.config(state=ACTIVE)
-    state = str(btnGetKey['state'])
-    if(state != 'DISABLED'):
-        btnBack.config(state=DISABLED)
+    btnBack.config(state=DISABLED)    
     btnBack.place(x=200, y=600)
 
     with open(path+'userkeys.txt') as fkin:
@@ -920,6 +918,7 @@ def openGenerateKey():
                 ePriv.insert(END,i["kprivate"])
                 ePriv.config(state=DISABLED)
                 btnGetKey.config(state=DISABLED)
+                btnBack.config(state=ACTIVE)
             break
     
     fkin.close()
@@ -975,6 +974,13 @@ def openConfirmPass():
     bGoSignup.place(x=20,y=10)
 
 def openEncodeFile():
+    def random_session(length):
+        str = '0123456789abcdefghijklmnopqrstuvwxyz'
+        kSession = ''
+        for i in range(length):
+            kSession += random.choice(str)
+        return kSession
+    kSession = random_session(16)
     pass
 def openDecodeFile():
     pass
@@ -1097,10 +1103,8 @@ def openConfirmSignFile():
     my_lbl2 = Label(winEd,text='........')
     my_lbl2.pack(pady=5)
 
-
     bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
-
 
     bSend = Button(winEd,text='Confirm',command=confirm)
     bSend.place(x=300,y=700)
