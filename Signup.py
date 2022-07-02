@@ -724,6 +724,7 @@ def openEditInfo():
                 if(ePassphrase.get()!=''):
                     #Get old kprivate - decrypt kprivate
                     
+                    #ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR THIS LINE
                     aes = pyaes.AESModeOfOperationCTR(str.encode(i["ksecret"]), pyaes.Counter(int(i["iv"])))
                     kPrivate_dec = aes.decrypt(i["kprivate"])
 
