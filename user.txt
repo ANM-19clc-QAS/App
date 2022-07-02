@@ -91,7 +91,7 @@
         "email": "dangnhan@gmail.com",
         "name": "Dang Hong Nhan",
         "dob": "19/05/1975",
-        "phone": "0982322471",
+        "phone": "0982322472",
         "address": "2545 QL14",
         "passphrase": "36bf859a3ac8a2ef2dce7c4bcb8b447920458531a607acfa9a763acd14f75aea:781ee997c7054a0f95fac130fcd5aaaa"
     },
