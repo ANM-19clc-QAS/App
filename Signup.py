@@ -806,6 +806,7 @@ def openGenerateKey():
     privkey, pubkey = key, key.public_key()
     privkeyPEM, pubkeyPEM = privkey.exportKey().decode('ascii'), pubkey.exportKey().decode('ascii')
 
+
     winGen = tk.Tk()
     winGen.geometry("700x700")
     winGen.title("Mã hóa")
@@ -1023,16 +1024,22 @@ def openConfirmSignFile():
 
     def confirm():
         for i in data_key:
-            print(i['kpublic'])
-            kpublic_user_sender = rsa.PublicKey.load_pkcs1(i['kpublic'])
-            print(kpublic_user_sender)
-            f = open(file).read()
-            s = open(sign).read()
-            try:
-                rsa.verify(f,s,kpublic_user_sender)
-                success_vertify()
-            except:
-                fail_vertify()
+            # kpublic_user_sender = rsa.PublicKey.load_pkcs1(i['kpublic'])
+            # print(kpublic_user_sender)
+            fname = "Sign/"+file
+            sname = "Sign/"+sign
+
+            f = open(fname,'rb')
+            print(f)
+            s = open(sname,'rb')
+            print(s)
+
+            rsa.verify(f.read(),s.read(),rsa.PublicKey.load_pkcs1(i['kpublic']))
+            success_vertify()
+            # try:
+            #     success_vertify()
+            # except:
+            #     fail_vertify()
 
             f.close()
             s.close()
