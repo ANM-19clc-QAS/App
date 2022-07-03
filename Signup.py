@@ -6,23 +6,17 @@ from select import select
 from tkinter import *
 from tkinter import filedialog
 from tkinter.ttk import *
-import json
 import tkinter as tk
-import re
-import hashlib
 from tokenize import String
 from turtle import bgcolor
 from click import option
 from numpy import empty
 from regex import F
-import rsa
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
-import os
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
-import binascii
 from tkinter import messagebox
 import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid, random
 
@@ -34,6 +28,11 @@ global data_key
 
 data_file = open('user.txt').read()
 data = json.loads(data_file)
+
+#CHECK PASSPHRASE
+def check_password(hashed_password, user_password):
+     password, salt = hashed_password.split(':')
+     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
 class User(object):
         def __init__(self, email):
@@ -870,8 +869,8 @@ def openGenerateKey():
 
         for i in dataKey:
             if (i["email"] == SIemail.get()):
-                i["kprivate"] = str(privkeyPEM)
-                i["kpublic"] = str(pubkeyPEM)
+                i["kprivate"] = str(privkey)
+                i["kpublic"] = str(pubkey)
                 break
 
         with open('userkeys.txt', 'w') as fout:
