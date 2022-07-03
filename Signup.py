@@ -837,7 +837,8 @@ def openGenerateKey():
     def GererateKey():
         #Generate RSA key pair
         random_generator = Random.new().read
-        (pubkey, privkey) = rsa.newkeys(2048)
+        key = RSA.generate(2048,random_generator)
+        privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
 
         #Encrypt Kprivate
         for i in data:
@@ -865,6 +866,8 @@ def openGenerateKey():
             if (i["email"] == SIemail.get()):
                 i["kprivate"] = str(ciphertext)
                 i["kpublic"] = str(pubkey)
+                i["ksecret"] = str(kSecret)
+                i["iv"] = str(iv)
                 break
 
         with open('userkeys.txt', 'w') as fout:
@@ -927,7 +930,6 @@ def openConfirmPass():
 
     def checkAccount():
         for i in data:
-            print(i["email"])
             if ((i["email"] == SIemail.get())):
                 if(check_password(i['passphrase'],passphrase.get())==FALSE):
                     messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
@@ -935,6 +937,7 @@ def openConfirmPass():
                     messagebox.showinfo('Edit information','Your passphrase is correct!')
                     winCon.destroy()
                     openEditInfo()
+                    break
             else:
                 noti.set("Your passphrase is incorrect!")
     
@@ -973,9 +976,11 @@ def openSignFile():
     winEd.geometry("700x800")
     winEd.title("SIGN FILE")
 
+    data_file = open('userkeys.txt').read()
+    data_Key = json.loads(data_file)
 
     # # sign file 
-    for i in data_key:
+    for i in data_Key:
         if i['email'] == curent_user:
             global kprivate_user_sender
             kprivate_user_sender = rsa.PrivateKey.load_pkcs1(i['kprivate'])
