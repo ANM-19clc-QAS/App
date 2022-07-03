@@ -7,6 +7,9 @@ from tkinter import filedialog
 from tkinter.ttk import *
 import tkinter as tk
 from tokenize import String
+import uuid
+from turtle import bgcolor
+from click import option
 from numpy import empty
 from regex import F
 from tkcalendar import DateEntry
@@ -18,9 +21,10 @@ from tkinter import messagebox
 import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid, random
 
 
-path = '/Users/anhquantran/Documents/GitHub/App/'
+# path = '/Users/anhquantran/Documents/GitHub/App/'
 # path = '/Users/son.n/Documents/GitHub/App/App/'
 # path = '/home/nson/Desktop/App/'
+path = '/Users/Administrator/Documents/GitHub/App/'
 
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
@@ -86,7 +90,7 @@ def openSignin():
                     if(j["email"]==SIemail.get()):
                         if(j["kprivate"]==''):
                             winsi.destroy()
-                            openGenerateKey()
+                            openGenerateKey()                            
                             break
                         else: 
                             winsi.destroy()
@@ -455,23 +459,26 @@ def openSendFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
     winEd.title("SEND FILE")
-
-    listbox = Listbox(winEd,fg='blue')
-    listbox.pack(pady=10,padx=15)
-    listbox.xview = 20
-
     global publickey_user_sender
     publickey_user_sender = ''
-    
+
+    options = []
     for i in data_key:
-        listbox.insert(0,i['email'])
+        if i['email'] != curent_user:
+            options.insert(0,i['email'])
+            
+    clicked = StringVar()
+
+    
+    
+  
 
     def selectFile():
         global publickey_user_sender
 
-        my_lbl.config(text=listbox.get(ANCHOR))
+        my_lbl.config(text=clicked.get())
         for i in data_key:
-            if i['email'] == listbox.get(ANCHOR):
+            if i['email'] == clicked.get():
                 publickey_user_sender = i['kpublic']
                 break
 
@@ -495,28 +502,33 @@ def openSendFile():
             f.write(file_data)
             f.close()
             file.close()
-            
+
+
+
+    bGoMenu = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoMenu.place(x=20,y=10)
+
+    lbFilename = Label(winEd, font=('arial', 15),text='........')
+    drop= OptionMenu(winEd,clicked,*options)
+    drop.pack(pady=50)
+
+
     bSelect = Button(winEd,text='Select Sender',command=selectFile)
-    bSelect.pack(pady=10)
+    bSelect.pack(pady=40)
 
     global my_lbl
     my_lbl = Label(winEd,text='........')
-    my_lbl.pack(pady=5)
-
-
-    global lbFilename
-
-    lbFilename = Label(winEd, font=('arial', 15),text='........')
-    lbFilename.place(x=250, y=400)
-
-    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
-    bGoSignup.place(x=20,y=10)
+    my_lbl.pack(pady=20)
 
     bChooseFile = Button(winEd,text='Choose File Send',command=openFolder)
-    bChooseFile.place(x=300,y=300)
+    bChooseFile.pack(pady=40)
+
+    global lbFilename
+    lbFilename = Label(winEd, font=('arial', 10),text='........')
+    lbFilename.pack(pady=20)
 
     bSend = Button(winEd,text='Send',command=sender)
-    bSend.place(x=300,y=500)
+    bSend.pack(pady=70)
 
 def openListFile():
     winEd = tk.Tk()
