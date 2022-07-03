@@ -514,7 +514,7 @@ def openListFile():
     listbox = Listbox(winEd,fg='blue')
     listbox.pack(pady=15)
 
-    for i in os.listdir(path+'DB'):
+    for i in os.listdir('DB'):
         listbox.insert(0,i)
 
     def selectFile():
@@ -905,7 +905,7 @@ def openGenerateKey():
     btnBack.place(x=200, y=600)
     btnBack.config(state=DISABLED)
 
-    with open(path+'userkeys.txt') as fkin:
+    with open('userkeys.txt') as fkin:
             dataKey = json.load(fkin)
 
     for i in dataKey:

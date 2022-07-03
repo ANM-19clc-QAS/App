@@ -1,21 +1,5 @@
 [
     {
-<<<<<<< Updated upstream
-        "email": "anhquantran@gmail.com",
-        "name": "Tran Anh Quan",
-        "dob": "17/01/2001",
-        "phone": "0344500718",
-        "address": "629 KDV",
-        "passphrase": "43cf239ee7b0b7d3949f1e95d946441f43c216e4270dd4d9fac13d36390beaf1:7c1c2da320b347c2af53f2f7d695c156"
-    },
-    {
-        "email": "test@gmail.com",
-        "name": "Tran Van Test",
-        "dob": "02/07/2022",
-        "phone": "0123456789",
-        "address": "10 Pho Quang",
-        "passphrase": "bb2604966ca638dbf2a5b29277c535f01fb5376466d7b34e9770d990b85e7c0e:6085f0a1b26b477e9e2aea816ea91ea4"
-=======
         "email": "nguyenson@gmail.com",
         "name": "nguyen son",
         "dob": "03/07/2022",
@@ -30,6 +14,5 @@
         "phone": "0999777222",
         "address": "10 KDV",
         "passphrase": "321aa6dd9a83781a547102dfd3ab58bd92bd0d8646460fb7429702e33dd6db64:890996f6788f43b5b205ec6e4f37196b"
->>>>>>> Stashed changes
     }
 ]
