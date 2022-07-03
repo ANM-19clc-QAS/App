@@ -8,11 +8,11 @@
         "passphrase": "43cf239ee7b0b7d3949f1e95d946441f43c216e4270dd4d9fac13d36390beaf1:7c1c2da320b347c2af53f2f7d695c156"
     },
     {
-        "email": "nguyenson10b12@gmail.com",
-        "name": "nguyen son ",
-        "dob": "03/07/2022",
-        "phone": "1234567890",
-        "address": "12 khj",
-        "passphrase": "8ee41eef510e5609e0657f29916d2e5f58bc1fb2fa121a6a0aa7a0ff15a6ae58:6b468df585ce4e0db1078963d8a63386"
+        "email": "test@gmail.com",
+        "name": "Tran Van Test",
+        "dob": "02/07/2022",
+        "phone": "0123456789",
+        "address": "10 Pho Quang",
+        "passphrase": "bb2604966ca638dbf2a5b29277c535f01fb5376466d7b34e9770d990b85e7c0e:6085f0a1b26b477e9e2aea816ea91ea4"
     }
 ]
