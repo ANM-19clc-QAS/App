@@ -314,7 +314,10 @@ def openSignup():
             'kpublic': '',
             'ksecret': '',
             'iv':'',
-            'ksession': ''
+            'passsalt':'',
+            'ksession': '',
+            'fiv':'',
+            'fpasssalt':''
         })
 
         with open('user.txt', 'w') as fout:
@@ -737,9 +740,10 @@ def openEditInfo():
                     aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv_new))
                     i["kprivate"] = aes.encrypt(str(kPrivate_dec))
                     i["iv"] = str(iv_new)
+                    i["passsalt"] = str(passwordSalt)
         
-        with open('user.txt', 'w') as fout:
-            json.dump(data, fout, indent=4, separators=(',',': '))
+        with open('userkeys.txt', 'w') as fout:
+            json.dump(data_key, fout, indent=4, separators=(',',': '))
         
         fout.close()
         success_edit()
@@ -878,6 +882,7 @@ def openGenerateKey():
                 i["kpublic"] = str(pubkey)
                 i["ksecret"] = str(kSecret)
                 i["iv"] = str(iv)
+                i["passsalt"] = str(passwordSalt)
                 break
 
         with open('userkeys.txt', 'w') as fout:

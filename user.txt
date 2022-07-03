@@ -6,5 +6,13 @@
         "phone": "0344500717",
         "address": "629 KDV",
         "passphrase": "0a2627eb0635de8ae66ab6dcb0a03f3a8b4eddc1d329dcab83532dfe2c9addfe:3893d42a8027406cabe8414390dd70f7"
+    },
+    {
+        "email": "test@gmail.com",
+        "name": "Tran Van Test",
+        "dob": "03/07/2022",
+        "phone": "0999888777",
+        "address": "10 PQ",
+        "passphrase": "a6daded4ffc91ca970195cd0218cc91aa8a25862140c2dbebd93ef4c09f58624:fe053cdbe72c4d0680cd2d242f98fa30"
     }
 ]
