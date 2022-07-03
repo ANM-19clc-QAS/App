@@ -423,31 +423,31 @@ def openMenu():
     bLogout.place(x=610,y=35)
 
     lbMenu = Label(winM, text="MENU", font=("arial", 25))
-    lbMenu.place(x=310, y=80)
+    lbMenu.place(x=310, y=100)
 
     bEdit = tk.Button(winM, font = ('Arial',18),text='Edit information',command=combine_funcs(winM.destroy,openConfirmPass),height=4,width=20)
-    bEdit.place(x=50, y=150)
+    bEdit.place(x=50, y=200)
 
     bGenKey = tk.Button(winM, font = ('Arial',18),text='Generate RSA keys',command=combine_funcs(winM.destroy,openGenerateKey),height=4,width=20)
-    bGenKey.place(x=50, y=300)
+    bGenKey.place(x=390, y=200)
 
-    bEncodeFile = tk.Button(winM, font = ('Arial',18),text='Encode file',command=combine_funcs(winM.destroy,openEncodeFile),height=4,width=20)
-    bEncodeFile.place(x=50, y=450)
+    # bEncodeFile = tk.Button(winM, font = ('Arial',18),text='Encode file',command=combine_funcs(winM.destroy,openEncodeFile),height=4,width=20)
+    # bEncodeFile.place(x=50, y=450)
 
     bDecodeFile = tk.Button(winM, font = ('Arial',18),text='Decode file',command=combine_funcs(winM.destroy,openDecodeFile),height=4,width=20)
-    bDecodeFile.place(x=390, y=150)
+    bDecodeFile.place(x=390, y=350)
 
     bSignFile = tk.Button(winM, font = ('Arial',18),text='Sign file',command=combine_funcs(winM.destroy,openSignFile),height=4,width=20)
-    bSignFile.place(x=390, y=300)
+    bSignFile.place(x=50, y=500)
 
     bConfirmSignFile = tk.Button(winM, font = ('Arial',18),text='Confirm sign file',command=combine_funcs(winM.destroy,openConfirmSignFile),height=4,width=20)
-    bConfirmSignFile.place(x=390, y=450)
+    bConfirmSignFile.place(x=390, y=500)
 
     bSendFile = tk.Button(winM, font = ('Arial',18),text='Send File',command=combine_funcs(winM.destroy,openSendFile),height=4,width=20)
-    bSendFile.place(x=390, y=600)
+    bSendFile.place(x=50, y=350)
 
-    bDownFile = tk.Button(winM, font = ('Arial',18),text='List Download File',command=combine_funcs(winM.destroy,openListFile),height=4,width=20)
-    bDownFile.place(x=50, y=600)
+    #bDownFile = tk.Button(winM, font = ('Arial',18),text='List Download File',command=combine_funcs(winM.destroy,openListFile),height=4,width=20)
+    #bDownFile.place(x=50, y=600)
     winM.mainloop()
 
 #SIGN AND SEND FILE
