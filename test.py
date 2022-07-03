@@ -51,9 +51,12 @@ aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
 ciphertext = aes.encrypt(str(privkey))
 print('Encrypted:', binascii.hexlify(ciphertext))
 print(type(ciphertext))
+#luu iv voi passswordsalt vo file userkeys.txt
 
 # Decrypt
-aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
+#doc iv voi passsalt --> doi passsalt sang bytes: new_passalt = str.encode(passsalt) va iv sang int
+#key_new = pbkdf2.PBKDF2(passphase, passwordSalt).read(32)
+aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv)) #thay key thanh key_new, int(iv)
 decrypted = aes.decrypt(ciphertext)
 print()
 print('Decrypted:', decrypted)
@@ -76,14 +79,14 @@ fkey = pbkdf2.PBKDF2(text, passwordSalt).read(32) #passwordSalt hay fpasswordSal
 print('AES encryption key:', binascii.hexlify(fkey))
 
 fiv = secrets.randbits(256)
-faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(iv)) #iv hay fiv
+faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(fiv)) #iv hay fiv
 fciphertext = faes.encrypt(text)
-print('Encrypted:', binascii.hexlify(fciphertext))
+print('Encrypted1:', binascii.hexlify(fciphertext))
 
-faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(iv)) #iv hay fiv
+faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(fiv)) #iv hay fiv
 fdecrypted = faes.decrypt(fciphertext)
 print()
-print('Decrypted:', fdecrypted)
+print('Decrypted1:', fdecrypted)
 print()
 
 # Encrypt

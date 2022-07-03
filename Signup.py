@@ -443,9 +443,10 @@ def openSendFile():
     winEd.title("SEND FILE")
     global publickey_user_sender
     publickey_user_sender = ''
-
+    data_file = open('userkeys.txt').read()
+    datakeys = json.loads(data_file)
     options = []
-    for i in data_key:
+    for i in datakeys:
         if i['email'] != curent_user:
             options.insert(0,i['email'])
             
@@ -455,7 +456,7 @@ def openSendFile():
         global publickey_user_sender
 
         my_lbl.config(text=clicked.get())
-        for i in data_key:
+        for i in datakeys:
             if i['email'] == clicked.get():
                 publickey_user_sender = i['kpublic']
                 break
@@ -473,6 +474,15 @@ def openSendFile():
             file = open(filename,'rb')
             # content
             file_data = file.read(4098)
+            filepasswordSalt = os.urandom(16)
+            fkey = pbkdf2.PBKDF2(file_data, filepasswordSalt).read(32) #passwordSalt hay fpasswordSalt?
+            print('AES encryption key:', binascii.hexlify(fkey))
+
+            fiv = secrets.randbits(256)
+            faes = pyaes.AESModeOfOperationCTR(fkey, pyaes.Counter(fiv)) #iv hay fiv
+            fciphertext = faes.encrypt(file_data)
+            print('Encrypted:', binascii.hexlify(fciphertext))
+            file_data = binascii.hexlify(fciphertext)
             # kpublic
             print(publickey_user_sender)
             filename1 = "DB/" +filename.split('/')[-1]
