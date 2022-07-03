@@ -14,5 +14,21 @@
         "phone": "0123456789",
         "address": "10 Pho Quang",
         "passphrase": "bb2604966ca638dbf2a5b29277c535f01fb5376466d7b34e9770d990b85e7c0e:6085f0a1b26b477e9e2aea816ea91ea4"
+    },
+    {
+        "email": "nguyenson@gmail.com",
+        "name": "nguyen son",
+        "dob": "03/07/2022",
+        "phone": "0987654321",
+        "address": "AS 23",
+        "passphrase": "9bfda49b2417daeaf872962536137c59e821d46d44d69a426c0f357a66f54763:2beb52d90f2b4ec58c62dce9ee02002f"
+    },
+    {
+        "email": "nguyen@gmail.com",
+        "name": "nguyen son",
+        "dob": "03/07/2022",
+        "phone": "0987654321",
+        "address": "12/1 ai",
+        "passphrase": "5367d614ed292a81b0fbae60ed02aec9db182c249bfc28da633e85abe3206e3e:656487f3b36845118b95ba1c65e739cc"
     }
 ]

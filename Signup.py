@@ -5,20 +5,26 @@ from select import select
 from tkinter import *
 from tkinter import filedialog
 from tkinter.ttk import *
+import json
 import tkinter as tk
+import re
+import hashlib
 from tokenize import String
 import uuid
 from turtle import bgcolor
 from click import option
 from numpy import empty
 from regex import F
+import rsa
 from tkcalendar import DateEntry
 from difflib import SequenceMatcher
 import datetime as dt
+import os
 from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
+import binascii
 from tkinter import messagebox
-import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid, random
+import base64
 
 
 # path = '/Users/anhquantran/Documents/GitHub/App/'
@@ -30,10 +36,14 @@ regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
 data_file = open(path+'user.txt').read()
+
 data = json.loads(data_file)
 
+
 data_file = open(path+'userkeys.txt').read()
+
 data_key = json.loads(data_file)
+
 
 class User(object):
         def __init__(self, email):
@@ -46,11 +56,6 @@ def combine_funcs(*funcs):
             f(*args, **kwargs)
     return combined_func
 
-#CHECK PASSPHRASE
-def check_password(hashed_password, user_password):
-    password, salt = hashed_password.split(':')
-    return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
-
 #SIGN IN
 def openSignin():
     # Create UI for Sign in screen
@@ -61,6 +66,9 @@ def openSignin():
     # #SIGN IN screen
     # users = {}
     # users['user'] = []
+
+  
+    
 
     # def object_decoder(obj):
     #     #print(obj['email'] + obj['email'])
@@ -97,12 +105,14 @@ def openSignin():
                             openMenu()
                             break
                 break           
+
             else:
                 SInotification.set("Not Right Password or Email")
         
     def success_signin():
         messagebox.showinfo('Sign in', 'You have successfully sign in!')
         
+
     def showPassIn():
         if(cShow_vin.get()==1):
             eSIpassphrase.config(show='')
@@ -156,6 +166,7 @@ def openSignup():
         return SequenceMatcher(None, a, b).ratio()
 
     #load json file and store user's keys into dataKey
+
     with open(path+'userkeys.txt') as fkin:
         dataKey = json.load(fkin)
 
@@ -329,7 +340,6 @@ def openSignup():
             'kprivate': '',
             'kpublic': '',
             'ksecret': '',
-            'iv':'',
             'ksession': ''
         })
 
@@ -454,7 +464,7 @@ def openMenu():
     bDownFile.place(x=50, y=600)
     winM.mainloop()
 
-#SIGN AND SEND FILE
+
 def openSendFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -508,7 +518,6 @@ def openSendFile():
     bGoMenu = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoMenu.place(x=20,y=10)
 
-    lbFilename = Label(winEd, font=('arial', 15),text='........')
     drop= OptionMenu(winEd,clicked,*options)
     drop.pack(pady=50)
 
@@ -529,6 +538,7 @@ def openSendFile():
 
     bSend = Button(winEd,text='Send',command=sender)
     bSend.pack(pady=70)
+
 
 def openListFile():
     winEd = tk.Tk()
@@ -566,14 +576,16 @@ def openListFile():
     button = Button(text='save',command=saveFile)
     button.pack()
 
+
     bSelect = Button(winEd,text='Select',command=selectFile)
     bSelect.pack(pady=10)
 
     global my_lbl
     my_lbl = Label(winEd,text='a')
     my_lbl.pack(pady=5)
+
     
-#EDIT INFORMATION (DONE)
+#EDIT INFORMATION
 def openEditInfo():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -730,26 +742,6 @@ def openEditInfo():
                 i["address"] = eAddress.get()
                 if(ePassphrase.get()!=''):
                     i["passphrase"] = hash_object.hexdigest()+':'+salt
-        
-        for i in data_key:
-            if (i["email"] == SIemail.get()):
-                if(ePassphrase.get()!=''):
-                    #Get old kprivate - decrypt kprivate
-                    
-                    #ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR THIS LINE
-                    aes = pyaes.AESModeOfOperationCTR(str.encode(i["ksecret"]), pyaes.Counter(int(i["iv"])))
-                    kPrivate_dec = aes.decrypt(i["kprivate"])
-
-                    #Encrypt kprivate with new passphrase
-                    iv_new = secrets.randbits(256)
-                    passwordSalt = os.urandom(16)
-                    kSecret_new = pbkdf2.PBKDF2(hash_object.hexdigest(), passwordSalt).read(32)
-                    print('AES encryption key:', binascii.hexlify(kSecret_new))
-
-                    
-                    aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv_new))
-                    i["kprivate"] = aes.encrypt(str(kPrivate_dec))
-                    i["iv"] = str(iv_new)
 
         with open('user.txt', 'w') as fout:
             json.dump(data, fout, indent=4, separators=(',',': '))
@@ -768,6 +760,7 @@ def openEditInfo():
             ePassphrase.config(show='*')
 
     #Label for Edit info
+    
     lbEmail = Label(winEd, text='Email',font=('arial',15))
     lbEmail.place(x = 150,y = 150)
     lbName = Label(winEd, text='Full Name',font=('arial',15))
@@ -838,14 +831,13 @@ def openEditInfo():
     btnBack = Button(winEd, text = 'BACK',command=combine_funcs(winEd.destroy,openMenu))
     btnBack.place(x=380, y=600)
 
-#GENERATE RSA KEYS (DONE)
-def openGenerateKey():
-    global key
-    global privkey
-    global pubkey
-    global ciphertext
 
-    #UI
+def openGenerateKey():
+    random_generator = Random.new().read
+    key = RSA.generate(2048,random_generator)
+    privkey, pubkey = key, key.public_key()
+    privkeyPEM, pubkeyPEM = privkey.exportKey().decode('ascii'), pubkey.exportKey().decode('ascii')
+
     winGen = tk.Tk()
     winGen.geometry("700x700")
     winGen.title("Mã hóa")
@@ -858,48 +850,15 @@ def openGenerateKey():
     lbPriv.place(x=50, y=350)
 
     def GererateKey():
-        #Generate RSA key pair
-        random_generator = Random.new().read
-        (pubkey, privkey) = rsa.newkeys(2048)
-        #privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
-
-        #Encrypt Kprivate
-        for i in data:
-            if(i["email"]==str(SIemail.get())):
-                passphrase, salt = i["passphrase"].split(':')
-                passwordSalt = os.urandom(16)
-                kSecret = pbkdf2.PBKDF2(passphrase, passwordSalt).read(32)
-                #print('AES encryption key:', binascii.hexlify(kSecrect))
-                break
-
-        iv = secrets.randbits(256)
-        aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
-        ciphertext = aes.encrypt(str(privkey))
-        #print('Encrypted:', binascii.hexlify(ciphertext))
-
-
-        #Decrypt Kprivate
-        #aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
-        #decrypted = aes.decrypt(ciphertext)
-        # print()
-        # print('Decrypted:', decrypted)
-
         btnGetKey.config(state=DISABLED)
-        ePub.insert(END,pubkey)
+        ePub.insert(END,pubkeyPEM)
         ePub.config(state=DISABLED)
-        ePriv.insert(END,binascii.hexlify(ciphertext))
-        ePriv.config(state=DISABLED) 
-        btnBack.config(state=ACTIVE) 
-
-        with open(path+'userkeys.txt') as fkin:
-            dataKey = json.load(fkin)
-
+        ePriv.insert(END,privkeyPEM)
+        ePriv.config(state=DISABLED)  
         for i in dataKey:
             if (i["email"] == SIemail.get()):
-                i["kprivate"] = str(ciphertext)
-                i["kpublic"] = str(pubkey)
-                i["ksecret"] = str(kSecret)
-                i["iv"] = iv
+                i["kprivate"] = str(privkeyPEM)
+                i["kpublic"] = str(pubkeyPEM)
                 break
 
         with open('userkeys.txt', 'w') as fout:
@@ -908,7 +867,7 @@ def openGenerateKey():
         fout.close()
     
     def successGen():
-        messagebox.showinfo('GENERATE KEYS', 'Your keys have been saved!')\
+        messagebox.showinfo('GENERATE KEYS', 'Your keys have been saved!')
 
     with open('userkeys.txt') as fkin:
         dataKey = json.load(fkin)
@@ -925,11 +884,7 @@ def openGenerateKey():
     btnGetKey.place(x=400, y=600)
 
     btnBack = Button(winGen, text = 'BACK',command=combine_funcs(winGen.destroy,openMenu))
-    btnBack.config(state=DISABLED)    
     btnBack.place(x=200, y=600)
-
-    with open(path+'userkeys.txt') as fkin:
-            dataKey = json.load(fkin)
 
     for i in dataKey:
         if (i["email"] == SIemail.get()):
@@ -939,18 +894,18 @@ def openGenerateKey():
                 ePriv.insert(END,i["kprivate"])
                 ePriv.config(state=DISABLED)
                 btnGetKey.config(state=DISABLED)
-                btnBack.config(state=ACTIVE)
             break
-    
-    fkin.close()
 
     winGen.mainloop()
 
-#CONFIRM PASSPHRASE
 def openConfirmPass():
     winCon = tk.Tk()
     winCon.geometry("500x300")
     winCon.title("Mã hóa")
+
+    def check_password(hashed_password, user_password):
+        password, salt = hashed_password.split(':')
+        return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
 
     def showPassIn():
         if(cShow_vin.get()==1):
@@ -960,13 +915,18 @@ def openConfirmPass():
 
     def checkAccount():
         for i in data:
+            print(i["email"])
+            if ((i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get())==FALSE):
+                messagebox.showinfo('Edit information','Your passphrase is not valid!\nPlease try again!')
+                break
             if (i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get()):
-                 messagebox.showinfo('Edit information','Your passphrase is correct!')
-                 winCon.destroy()
-                 openEditInfo()
-                 break
+                print(i["email"])
+                messagebox.showinfo('Edit information','Your passphrase is correct!')
+                winCon.destroy()
+                openEditInfo()
+                break
             else:
-                 noti.set("Your passphrase is incorrect!")
+                noti.set("Your passphrase is incorrect!")
             
     passphrase = tk.StringVar()
     noti = tk.StringVar()
@@ -995,21 +955,14 @@ def openConfirmPass():
     bGoSignup.place(x=20,y=10)
 
 def openEncodeFile():
-    def random_session(length):
-        str = '0123456789abcdefghijklmnopqrstuvwxyz'
-        kSession = ''
-        for i in range(length):
-            kSession += random.choice(str)
-        return kSession
-    kSession = random_session(16)
     pass
 def openDecodeFile():
     pass
-
 def openSignFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
     winEd.title("SEND FILE")
+
 
     # # sign file 
     for i in data_key:
@@ -1044,6 +997,9 @@ def openSignFile():
         f.close()
         file.close()
 
+            
+            
+
 
     global lbFilename
     lbFilename = Label(winEd, font=('arial', 15),text='........')
@@ -1066,10 +1022,14 @@ def openConfirmSignFile():
     listbox = Listbox(winEd,fg='blue')
     listbox.pack(pady=10,padx=15)
     listbox.xview = 20
+
+
     listbox1 = Listbox(winEd,fg='blue')
 
 
     # # sign file 
+    
+    
     def selectFile():
         my_lbl.config(text=listbox.get(ANCHOR))
         global file
@@ -1124,16 +1084,20 @@ def openConfirmSignFile():
     my_lbl2 = Label(winEd,text='........')
     my_lbl2.pack(pady=5)
 
+
     bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
+
 
     bSend = Button(winEd,text='Confirm',command=confirm)
     bSend.place(x=300,y=700)
 
 
 if __name__ == "__main__":
+
     openSignup()
     #openMenu()
+
     #openGenerateKey()
     #del data
     
