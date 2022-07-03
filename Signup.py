@@ -546,11 +546,15 @@ def openListFile():
     winEd.title("Mã hóa")
 
     listbox = Listbox(winEd,fg='blue')
-    listbox.pack(pady=15)
+    listbox.pack(pady=50)
 
     for i in os.listdir(path+'DB'):
         listbox.insert(0,i)
 
+    listbox.select_anchor(0)
+
+  
+    
     def selectFile():
         my_lbl.config(text=listbox.get(ANCHOR))
     def saveFile():
@@ -559,30 +563,32 @@ def openListFile():
                                             ("Text file",".txt"),
                                             ("HTML file", ".html"),
                                             ("All files", ".*"),
-                                        ])
+                                        ],mode='wb')
         if file is None:
             return
-
+        filename = path+'DB/'+listbox.get(ANCHOR)
         f = open(filename,'rb')
         file_data = f.read(4098)
+        # print(file_data)
         # filetext = str(text.get(1.0,END))
         #filetext = input("Enter some text I guess: ") //use this if you want to use console window
         file.write(file_data)
         f.close()
         file.close()
         
-    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
-    bGoSignup.place(x=20,y=10)
+    bGoMenu = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoMenu.place(x=20,y=10)
+
     button = Button(text='save',command=saveFile)
-    button.pack()
+    button.pack(pady=50)
 
 
     bSelect = Button(winEd,text='Select',command=selectFile)
     bSelect.pack(pady=10)
-
     global my_lbl
     my_lbl = Label(winEd,text='a')
     my_lbl.pack(pady=5)
+    my_lbl.config(text=listbox.get(ANCHOR))
 
     
 #EDIT INFORMATION
