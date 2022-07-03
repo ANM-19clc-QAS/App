@@ -436,7 +436,9 @@ def openMenu():
 
     winM.mainloop()
 
+
 #ENCODE AND SEND FILE
+
 def openSendFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -504,7 +506,7 @@ def openSendFile():
     bSend = Button(winEd,text='Send',command=sender)
     bSend.pack(pady=70)
 
-#RECEIVE AND DECODE FILE
+
 def openDecodeFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -920,11 +922,16 @@ def openConfirmPass():
     bGoSignup = Button(winCon,text='BACK',command=combine_funcs(winCon.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
 
-#SIGN AND SEND FILE
+def openEncodeFile():
+    pass
+def openDecodeFile():
+    pass
+
+# SIGN FILE
 def openSignFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
-    winEd.title("SEND FILE")
+    winEd.title("SIGN FILE")
 
 
     # # sign file 
@@ -936,8 +943,8 @@ def openSignFile():
 
     def openFolder():
         global filename
-        filename = 'sample.doc'
-        # filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
+        # filename = path + 'sample.doc'
+        filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
         lbFilename.config(text=filename)
 
     def sender():
@@ -959,41 +966,64 @@ def openSignFile():
         s.close()
         f.close()
         file.close()
+        success_sign()
+
+    def success_sign():
+        messagebox.showinfo('SIGN FILE', 'You have successfully sign!')
+    def fail_sign():
+        messagebox.showinfo('SIGN FILE', 'You have fail sign!')
+
+            
+    bGoMenu = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoMenu.place(x=20,y=10)      
+
+    bChooseFile = Button(winEd,text='Choose File Sign',command=openFolder)
+    bChooseFile.pack(pady=100)
 
     global lbFilename
     lbFilename = Label(winEd, font=('arial', 15),text='........')
-    lbFilename.place(x=250, y=400)
+    lbFilename.pack(pady=50)
 
-    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
-    bGoSignup.place(x=20,y=10)
 
-    bChooseFile = Button(winEd,text='Choose File Send',command=openFolder)
-    bChooseFile.place(x=250,y=450)
-
-    bSend = Button(winEd,text='Send',command=sender)
-    bSend.place(x=300,y=500)
-
-#CONFIRM SIGN AND DECODE FILE
+  
+    bSend = Button(winEd,text='Sign',command=sender)
+    bSend.pack(pady=100)
+# VETIFY FILE
 def openConfirmSignFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
     winEd.title("SEND FILE")
 
-    listbox = Listbox(winEd,fg='blue')
-    listbox.pack(pady=10,padx=15)
-    listbox.xview = 20
 
+    options_file = []
+    options_sig = []
+
+    clicked_file = StringVar()
+    clicked_sign = StringVar()
+
+    for i in os.listdir(path+'Sign'):
+        k = i.split('.')
+        if k[-1] == 'sig':
+            options_sig.insert(0,i)
+        else:
+            options_file.insert(0,i)
+
+
+    drop_file = OptionMenu(winEd,clicked_file,*options_file)
+    drop_sign = OptionMenu(winEd,clicked_sign,*options_sig)
+    listbox = Listbox(winEd,fg='blue')
+    
     listbox1 = Listbox(winEd,fg='blue')
 
     # # sign file 
     def selectFile():
-        my_lbl.config(text=listbox.get(ANCHOR))
+        my_lbl.config(text=clicked_file.get())
         global file
-        file = listbox.get(ANCHOR)
+        file = clicked_file.get()
     def selectSign():
-        my_lbl1.config(text=listbox1.get(ANCHOR))
+        my_lbl1.config(text=clicked_sign.get())
         global sign
-        sign = listbox1.get(ANCHOR)
+        sign = clicked_sign.get()
 
     def confirm():
         for i in data_key:
@@ -1002,20 +1032,23 @@ def openConfirmSignFile():
             s = open(sign).read()
             try:
                 rsa.verify(f,s,kpublic_user_sender)
-                print(0)
+                success_vertify()
             except:
-                print(1)
+                fail_vertify()
 
             f.close()
             s.close()
 
-    for i in os.listdir('Sign'):
-        k = i.split('.')
-        if k[-1] == 'sig':
-            listbox1.insert(0,i)
-        else:
-            listbox.insert(0,i)
-       
+    def success_vertify():
+        messagebox.showinfo('SIGN FILE', 'You have successfully verify!')
+    def fail_vertify():
+        messagebox.showinfo('SIGN FILE', 'You have fail verify!')
+
+    bGoMenu = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoMenu.place(x=20,y=10)
+    
+    drop_file.pack(pady=50,padx=15)
+
     bSelect = Button(winEd,text='Select File',command=selectFile)
     bSelect.pack(pady=10)
 
@@ -1023,9 +1056,7 @@ def openConfirmSignFile():
     my_lbl = Label(winEd,text='........')
     my_lbl.pack(pady=5)
 
-    listbox1.pack(pady=10,padx=15)
-    listbox1.xview = 20
-    
+    drop_sign.pack(pady=50,padx=15)
     bSelect1 = Button(winEd,text='Select Sign',command=selectSign)
     bSelect1.pack(pady=10)
 
@@ -1033,16 +1064,16 @@ def openConfirmSignFile():
     my_lbl1 = Label(winEd,text='........')
     my_lbl1.pack(pady=5)
 
+
     global my_lbl2
     my_lbl2 = Label(winEd,text='........')
     my_lbl2.pack(pady=5)
 
     bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
-
-
+    
     bSend = Button(winEd,text='Confirm',command=confirm)
-    bSend.place(x=300,y=700)
+    bSend.pack(pady=70)
 
 #MAIN FUNCTION
 if __name__ == "__main__":
