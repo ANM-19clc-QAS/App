@@ -26,24 +26,14 @@ import binascii
 from tkinter import messagebox
 import base64
 
-
-# path = '/Users/anhquantran/Documents/GitHub/App/'
-# path = '/Users/son.n/Documents/GitHub/App/App/'
-# path = '/home/nson/Desktop/App/'
-path = '/Users/Administrator/Documents/GitHub/App/'
-
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
-data_file = open(path+'user.txt').read()
-
+data_file = open('user.txt').read()
 data = json.loads(data_file)
 
-
-data_file = open(path+'userkeys.txt').read()
-
+data_file = open('userkeys.txt').read()
 data_key = json.loads(data_file)
-
 
 class User(object):
         def __init__(self, email):
@@ -62,18 +52,6 @@ def openSignin():
     winsi = tk.Tk()
     winsi.geometry("500x300")
     winsi.title("Mã hóa")
-
-    # #SIGN IN screen
-    # users = {}
-    # users['user'] = []
-
-  
-    
-
-    # def object_decoder(obj):
-    #     #print(obj['email'] + obj['email'])
-    #     if 'email' in obj and 'passphrase' in obj:
-    #         users['user'].append(User(obj['name'], obj['passphrase'])) 
 
     def valid_signin_email(input):
         if(re.search(regex_email,input) and input.isalpha):
@@ -112,7 +90,6 @@ def openSignin():
     def success_signin():
         messagebox.showinfo('Sign in', 'You have successfully sign in!')
         
-
     def showPassIn():
         if(cShow_vin.get()==1):
             eSIpassphrase.config(show='')
@@ -167,7 +144,7 @@ def openSignup():
 
     #load json file and store user's keys into dataKey
 
-    with open(path+'userkeys.txt') as fkin:
+    with open('userkeys.txt') as fkin:
         dataKey = json.load(fkin)
 
     def valid_email(input):
@@ -437,34 +414,31 @@ def openMenu():
     bLogout.place(x=610,y=35)
 
     lbMenu = Label(winM, text="MENU", font=("arial", 25))
-    lbMenu.place(x=310, y=80)
+    lbMenu.place(x=310, y=100)
 
     bEdit = tk.Button(winM, font = ('Arial',18),text='Edit information',command=combine_funcs(winM.destroy,openConfirmPass),height=4,width=20)
-    bEdit.place(x=50, y=150)
+    bEdit.place(x=50, y=200)
 
     bGenKey = tk.Button(winM, font = ('Arial',18),text='Generate RSA keys',command=combine_funcs(winM.destroy,openGenerateKey),height=4,width=20)
-    bGenKey.place(x=50, y=300)
-
-    bEncodeFile = tk.Button(winM, font = ('Arial',18),text='Encode file',command=combine_funcs(winM.destroy,openEncodeFile),height=4,width=20)
-    bEncodeFile.place(x=50, y=450)
+    bGenKey.place(x=390, y=200)
 
     bDecodeFile = tk.Button(winM, font = ('Arial',18),text='Decode file',command=combine_funcs(winM.destroy,openDecodeFile),height=4,width=20)
-    bDecodeFile.place(x=390, y=150)
+    bDecodeFile.place(x=390, y=350)
 
     bSignFile = tk.Button(winM, font = ('Arial',18),text='Sign file',command=combine_funcs(winM.destroy,openSignFile),height=4,width=20)
-    bSignFile.place(x=390, y=300)
+    bSignFile.place(x=50, y=500)
 
     bConfirmSignFile = tk.Button(winM, font = ('Arial',18),text='Confirm sign file',command=combine_funcs(winM.destroy,openConfirmSignFile),height=4,width=20)
-    bConfirmSignFile.place(x=390, y=450)
+    bConfirmSignFile.place(x=390, y=500)
 
     bSendFile = tk.Button(winM, font = ('Arial',18),text='Send File',command=combine_funcs(winM.destroy,openSendFile),height=4,width=20)
-    bSendFile.place(x=390, y=600)
+    bSendFile.place(x=50, y=350)
 
-    bDownFile = tk.Button(winM, font = ('Arial',18),text='List Download File',command=combine_funcs(winM.destroy,openListFile),height=4,width=20)
-    bDownFile.place(x=50, y=600)
     winM.mainloop()
 
-#SEND FILE
+
+#ENCODE AND SEND FILE
+
 def openSendFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -478,10 +452,6 @@ def openSendFile():
             options.insert(0,i['email'])
             
     clicked = StringVar()
-
-    
-    
-  
 
     def selectFile():
         global publickey_user_sender
@@ -507,20 +477,17 @@ def openSendFile():
             file_data = file.read(4098)
             # kpublic
             print(publickey_user_sender)
-            filename1 = path + "DB/" +filename.split('/')[-1]
+            filename1 = "DB/" +filename.split('/')[-1]
             f = open(filename1, "wb")
             f.write(file_data)
             f.close()
             file.close()
-
-
 
     bGoMenu = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoMenu.place(x=20,y=10)
 
     drop= OptionMenu(winEd,clicked,*options)
     drop.pack(pady=50)
-
 
     bSelect = Button(winEd,text='Select Sender',command=selectFile)
     bSelect.pack(pady=40)
@@ -539,8 +506,8 @@ def openSendFile():
     bSend = Button(winEd,text='Send',command=sender)
     bSend.pack(pady=70)
 
-#DOWNLOAD FILE
-def openListFile():
+
+def openDecodeFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
     winEd.title("Mã hóa")
@@ -548,13 +515,11 @@ def openListFile():
     listbox = Listbox(winEd,fg='blue')
     listbox.pack(pady=50)
 
-    for i in os.listdir(path+'DB'):
+    for i in os.listdir('DB'):
         listbox.insert(0,i)
 
     listbox.select_anchor(0)
 
-  
-    
     def selectFile():
         my_lbl.config(text=listbox.get(ANCHOR))
     def saveFile():
@@ -566,12 +531,10 @@ def openListFile():
                                         ],mode='wb')
         if file is None:
             return
-        filename = path+'DB/'+listbox.get(ANCHOR)
+        filename = 'DB/'+listbox.get(ANCHOR)
         f = open(filename,'rb')
         file_data = f.read(4098)
-        # print(file_data)
-        # filetext = str(text.get(1.0,END))
-        #filetext = input("Enter some text I guess: ") //use this if you want to use console window
+
         file.write(file_data)
         f.close()
         file.close()
@@ -582,7 +545,6 @@ def openListFile():
     button = Button(text='save',command=saveFile)
     button.pack(pady=50)
 
-
     bSelect = Button(winEd,text='Select',command=selectFile)
     bSelect.pack(pady=10)
     global my_lbl
@@ -590,7 +552,6 @@ def openListFile():
     my_lbl.pack(pady=5)
     my_lbl.config(text=listbox.get(ANCHOR))
 
-    
 #EDIT INFORMATION
 def openEditInfo():
     winEd = tk.Tk()
@@ -837,7 +798,7 @@ def openEditInfo():
     btnBack = Button(winEd, text = 'BACK',command=combine_funcs(winEd.destroy,openMenu))
     btnBack.place(x=380, y=600)
 
-
+#GENERATE RSA KEYS
 def openGenerateKey():
     random_generator = Random.new().read
     key = RSA.generate(2048,random_generator)
@@ -904,6 +865,7 @@ def openGenerateKey():
 
     winGen.mainloop()
 
+#CONFIRM PASSPHRASE
 def openConfirmPass():
     winCon = tk.Tk()
     winCon.geometry("500x300")
@@ -994,10 +956,10 @@ def openSignFile():
         #sign file sha-256
         signature = rsa.sign(file_data,kprivate_user_sender,'SHA-256')
         #save sign file
-        s = open(path+'Sign/'+filename.split('/')[-1]+'.sig','wb')
+        s = open('Sign/'+filename.split('/')[-1]+'.sig','wb')
         s.write(signature)
        
-        filename1 = path + "Sign/" +filename.split('/')[-1]
+        filename1 = "Sign/" +filename.split('/')[-1]
         f = open(filename1, "wb")
         f.write(file_data)
 
@@ -1021,6 +983,7 @@ def openSignFile():
     global lbFilename
     lbFilename = Label(winEd, font=('arial', 15),text='........')
     lbFilename.pack(pady=50)
+
 
   
     bSend = Button(winEd,text='Sign',command=sender)
@@ -1052,10 +1015,7 @@ def openConfirmSignFile():
     
     listbox1 = Listbox(winEd,fg='blue')
 
-
     # # sign file 
-    
-    
     def selectFile():
         my_lbl.config(text=clicked_file.get())
         global file
@@ -1064,7 +1024,6 @@ def openConfirmSignFile():
         my_lbl1.config(text=clicked_sign.get())
         global sign
         sign = clicked_sign.get()
-
 
     def confirm():
         for i in data_key:
@@ -1098,7 +1057,6 @@ def openConfirmSignFile():
     my_lbl.pack(pady=5)
 
     drop_sign.pack(pady=50,padx=15)
-
     bSelect1 = Button(winEd,text='Select Sign',command=selectSign)
     bSelect1.pack(pady=10)
 
@@ -1107,15 +1065,20 @@ def openConfirmSignFile():
     my_lbl1.pack(pady=5)
 
 
+    global my_lbl2
+    my_lbl2 = Label(winEd,text='........')
+    my_lbl2.pack(pady=5)
+
+    bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
+    bGoSignup.place(x=20,y=10)
+    
     bSend = Button(winEd,text='Confirm',command=confirm)
     bSend.pack(pady=70)
 
-
+#MAIN FUNCTION
 if __name__ == "__main__":
-
     openSignup()
     #openMenu()
-
     #openGenerateKey()
     #del data
     
