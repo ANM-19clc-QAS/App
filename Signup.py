@@ -24,10 +24,14 @@ regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
 global data
+global dataKey
 global data_key
 
 data_file = open('user.txt').read()
 data = json.loads(data_file)
+
+data_file = open('userkeys.txt').read()
+dataKey = json.loads(data_file)
 
 #CHECK PASSPHRASE
 def check_password(hashed_password, user_password):
@@ -138,10 +142,6 @@ def openSignup():
     #get the probability of a string being similar to another string
     def similar(a, b):
         return SequenceMatcher(None, a, b).ratio()
-
-    #load json file and store user's keys into dataKey
-    with open('userkeys.txt') as fkin:
-        dataKey = json.load(fkin)
 
     def valid_email(input):
 
@@ -313,6 +313,7 @@ def openSignup():
             'kprivate': '',
             'kpublic': '',
             'ksecret': '',
+            'iv':'',
             'ksession': ''
         })
 
@@ -325,6 +326,7 @@ def openSignup():
         success_signup()
         winsu.destroy()
         openSignin()
+        del dataKey
 
     def success_signup():
         messagebox.showinfo('Sign up', 'You have successfully registered!')
