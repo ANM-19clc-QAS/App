@@ -8,11 +8,8 @@ from tkinter import filedialog
 from tkinter.ttk import *
 import tkinter as tk
 from tokenize import String
-<<<<<<< Updated upstream
-=======
 from turtle import bgcolor
 from click import option
->>>>>>> Stashed changes
 from numpy import empty
 from regex import F
 from tkcalendar import DateEntry
@@ -22,33 +19,16 @@ from Cryptodome import Random
 from Cryptodome.PublicKey import RSA
 from tkinter import messagebox
 import pyaes, pbkdf2, binascii, os, secrets, base64, re, json, rsa, hashlib, uuid, random
-<<<<<<< Updated upstream
-
-
-path = '/Users/anhquantran/Documents/GitHub/App/'
-# path = '/Users/son.n/Documents/GitHub/App/App/'
-# path = '/home/nson/Desktop/App/'
-=======
->>>>>>> Stashed changes
 
 regex_email = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
 regex_name = "^([a-zA-Z]{2,}\s[a-zA-Z]{1,}'?-?[a-zA-Z]{2,}\s?([a-zA-Z]{1,})?)"
 
-<<<<<<< Updated upstream
-data_file = open(path+'user.txt').read()
-data = json.loads(data_file)
-
-data_file = open(path+'userkeys.txt').read()
-data_key = json.loads(data_file)
-
-=======
 global data
 global data_key
 
 data_file = open('user.txt').read()
 data = json.loads(data_file)
 
->>>>>>> Stashed changes
 class User(object):
         def __init__(self, email):
             self.email = email
@@ -62,13 +42,8 @@ def combine_funcs(*funcs):
 
 #CHECK PASSPHRASE
 def check_password(hashed_password, user_password):
-<<<<<<< Updated upstream
     password, salt = hashed_password.split(':')
     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
-=======
-     password, salt = hashed_password.split(':')
-     return password == hashlib.sha256(salt.encode() + user_password.encode()).hexdigest()
->>>>>>> Stashed changes
 
 #SIGN IN
 def openSignin():
@@ -79,15 +54,6 @@ def openSignin():
     winsi = tk.Tk()
     winsi.geometry("500x300")
     winsi.title("Mã hóa")
-
-    # #SIGN IN screen
-    # users = {}
-    # users['user'] = []
-
-    # def object_decoder(obj):
-    #     #print(obj['email'] + obj['email'])
-    #     if 'email' in obj and 'passphrase' in obj:
-    #         users['user'].append(User(obj['name'], obj['passphrase'])) 
 
     def valid_signin_email(input):
         if(re.search(regex_email,input) and input.isalpha):
@@ -105,35 +71,18 @@ def openSignin():
                 curent_user = siEmail
                 success_signin()
                 for j in data_key:
-                    print('0')
                     if(j["email"]==SIemail.get()):
-                        print('1')
                         if(j["kprivate"]==''):
-                            print('2')
                             winsi.destroy()
-<<<<<<< Updated upstream
-                            openGenerateKey()
-                            break
-=======
                             openGenerateKey()  
                             break                         
->>>>>>> Stashed changes
                         else: 
-                            print('3')
                             winsi.destroy()
-<<<<<<< Updated upstream
-                            openMenu()
-                            break
-                break           
-=======
                             openMenu()  
                             break  
-                    print('4')   
                 break   
->>>>>>> Stashed changes
             else:
                 SInotification.set("Not Right Password or Email")
-            print('5')
         
     def success_signin():
         messagebox.showinfo('Sign in', 'You have successfully sign in!')
@@ -191,7 +140,7 @@ def openSignup():
         return SequenceMatcher(None, a, b).ratio()
 
     #load json file and store user's keys into dataKey
-    with open(path+'userkeys.txt') as fkin:
+    with open('userkeys.txt') as fkin:
         dataKey = json.load(fkin)
 
     def valid_email(input):
@@ -529,7 +478,7 @@ def openSendFile():
             file_data = file.read(4098)
             # kpublic
             print(publickey_user_sender)
-            filename1 = path + "DB/" +filename.split('/')[-1]
+            filename1 = "DB/" +filename.split('/')[-1]
             f = open(filename1, "wb")
             f.write(file_data)
             f.close()
@@ -757,20 +706,13 @@ def openEditInfo():
                 i["address"] = eAddress.get()
                 if(ePassphrase.get()!=''):
                     i["passphrase"] = hash_object.hexdigest()+':'+salt
-<<<<<<< Updated upstream
-        
+
         for i in data_key:
             if (i["email"] == SIemail.get()):
                 if(ePassphrase.get()!=''):
                     #Get old kprivate - decrypt kprivate
                     
                     #ERRORRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR THIS LINE
-=======
-        for i in data_key:
-             if (i["email"] == SIemail.get()):
-                 if(ePassphrase.get()!=''):
-                    #Get old kprivate - decrypt kprivate
->>>>>>> Stashed changes
                     aes = pyaes.AESModeOfOperationCTR(str.encode(i["ksecret"]), pyaes.Counter(int(i["iv"])))
                     kPrivate_dec = aes.decrypt(i["kprivate"])
 
@@ -780,18 +722,10 @@ def openEditInfo():
                     kSecret_new = pbkdf2.PBKDF2(hash_object.hexdigest(), passwordSalt).read(32)
                     print('AES encryption key:', binascii.hexlify(kSecret_new))
 
-<<<<<<< Updated upstream
-                    
-                    aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv_new))
-                    i["kprivate"] = aes.encrypt(str(kPrivate_dec))
-                    i["iv"] = str(iv_new)
-
-=======
                     aes = pyaes.AESModeOfOperationCTR(kSecret_new, pyaes.Counter(iv_new))
                     i["kprivate"] = aes.encrypt(str(kPrivate_dec))
                     i["iv"] = str(iv_new)
         
->>>>>>> Stashed changes
         with open('user.txt', 'w') as fout:
             json.dump(data, fout, indent=4, separators=(',',': '))
         
@@ -881,16 +815,13 @@ def openEditInfo():
 
 #GENERATE RSA KEYS (DONE)
 def openGenerateKey():
-<<<<<<< Updated upstream
     global key
     global privkey
     global pubkey
     global ciphertext
-=======
     random_generator = Random.new().read
     (pubkey, privkey) = rsa.newkeys(2048)
     #privkeyPEM, pubkeyPEM = privkey.exportKey().decode('ascii'), pubkey.exportKey().decode('ascii')
->>>>>>> Stashed changes
 
     #UI
     winGen = tk.Tk()
@@ -918,40 +849,25 @@ def openGenerateKey():
                 kSecret = pbkdf2.PBKDF2(passphrase, passwordSalt).read(32)
                 #print('AES encryption key:', binascii.hexlify(kSecrect))
                 break
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
         iv = secrets.randbits(256)
         aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
         ciphertext = aes.encrypt(str(privkey))
         #print('Encrypted:', binascii.hexlify(ciphertext))
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
         #Decrypt Kprivate
         #aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
         #decrypted = aes.decrypt(ciphertext)
         # print()
         # print('Decrypted:', decrypted)
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
         btnGetKey.config(state=DISABLED)
         ePub.insert(END,pubkey)
         ePub.config(state=DISABLED)
         ePriv.insert(END,binascii.hexlify(ciphertext))
         ePriv.config(state=DISABLED) 
         btnBack.config(state=ACTIVE) 
-<<<<<<< Updated upstream
 
-        with open(path+'userkeys.txt') as fkin:
-=======
         with open('userkeys.txt') as fkin:
->>>>>>> Stashed changes
             dataKey = json.load(fkin)
 
         for i in dataKey:
@@ -1021,16 +937,6 @@ def openConfirmPass():
 
     def checkAccount():
         for i in data:
-<<<<<<< Updated upstream
-            if (i["email"] == SIemail.get()) & check_password(i['passphrase'],passphrase.get()):
-                 messagebox.showinfo('Edit information','Your passphrase is correct!')
-                 winCon.destroy()
-                 openEditInfo()
-                 break
-            else:
-                 noti.set("Your passphrase is incorrect!")
-            
-=======
             print(i["email"])
             if ((i["email"] == SIemail.get())):
                 if(check_password(i['passphrase'],passphrase.get())==FALSE):
@@ -1042,7 +948,6 @@ def openConfirmPass():
             else:
                 noti.set("Your passphrase is incorrect!")
     
->>>>>>> Stashed changes
     passphrase = tk.StringVar()
     noti = tk.StringVar()
 
@@ -1095,7 +1000,7 @@ def openSignFile():
 
     def openFolder():
         global filename
-        filename = path + 'sample.doc'
+        filename = 'sample.doc'
         # filename =  filedialog.askopenfilename(initialdir=os.getcwd(),title="Select File",filetypes=(('file_type','*.txt'),('all files','.*')))
         lbFilename.config(text=filename)
 
@@ -1108,10 +1013,10 @@ def openSignFile():
         #sign file sha-256
         signature = rsa.sign(file_data,kprivate_user_sender,'SHA-256')
         #save sign file
-        s = open(path+'Sign/'+filename.split('/')[-1]+'.sig','wb')
+        s = open('Sign/'+filename.split('/')[-1]+'.sig','wb')
         s.write(signature)
        
-        filename1 = path + "Sign/" +filename.split('/')[-1]
+        filename1 = "Sign/" +filename.split('/')[-1]
         f = open(filename1, "wb")
         f.write(file_data)
 
@@ -1133,14 +1038,6 @@ def openSignFile():
     bSend = Button(winEd,text='Send',command=sender)
     bSend.place(x=300,y=500)
 
-<<<<<<< Updated upstream
-=======
-  
-    bSend = Button(winEd,text='Sign',command=sender)
-    bSend.pack(pady=100)
-
-# VETIFY FILE
->>>>>>> Stashed changes
 def openConfirmSignFile():
     winEd = tk.Tk()
     winEd.geometry("700x800")
@@ -1150,7 +1047,6 @@ def openConfirmSignFile():
     listbox.pack(pady=10,padx=15)
     listbox.xview = 20
     listbox1 = Listbox(winEd,fg='blue')
-
 
     # # sign file 
     def selectFile():
@@ -1177,8 +1073,7 @@ def openConfirmSignFile():
             f.close()
             s.close()
 
-
-    for i in os.listdir(path+'Sign'):
+    for i in os.listdir('Sign'):
         k = i.split('.')
         if k[-1] == 'sig':
             listbox1.insert(0,i)
@@ -1218,7 +1113,8 @@ if __name__ == "__main__":
     openSignup()
     #openMenu()
     #openGenerateKey()
-    
+    del data
+
     
 
 
