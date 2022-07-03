@@ -14,5 +14,13 @@
         "phone": "0999777222",
         "address": "10 KDV",
         "passphrase": "321aa6dd9a83781a547102dfd3ab58bd92bd0d8646460fb7429702e33dd6db64:890996f6788f43b5b205ec6e4f37196b"
+    },
+    {
+        "email": "anhquantran@gmail.com",
+        "name": "Tran Anh Quan",
+        "dob": "17/01/2001",
+        "phone": "0344500717",
+        "address": "629 KDV",
+        "passphrase": "1752af100fde1e2de1f1243ef2c07682491b8d1e4146d29ec0dfbc282b346668:687a3ba673004361a3a1767c32fd69f7"
     }
 ]

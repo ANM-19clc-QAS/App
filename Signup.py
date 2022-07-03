@@ -30,9 +30,6 @@ global data_key
 data_file = open('user.txt').read()
 data = json.loads(data_file)
 
-data_file = open('userkeys.txt').read()
-dataKey = json.loads(data_file)
-
 #CHECK PASSPHRASE
 def check_password(hashed_password, user_password):
      password, salt = hashed_password.split(':')
@@ -307,6 +304,9 @@ def openSignup():
             'address': eAddress.get(),
             'passphrase': hash_object.hexdigest()+':'+salt,
         })
+
+        data_file = open('userkeys.txt').read()
+        dataKey = json.loads(data_file)
 
         dataKey.append({
             'email': eEmail.get(),
@@ -822,9 +822,6 @@ def openGenerateKey():
     global privkey
     global pubkey
     global ciphertext
-    random_generator = Random.new().read
-    (pubkey, privkey) = rsa.newkeys(2048)
-    #privkeyPEM, pubkeyPEM = privkey.exportKey().decode('ascii'), pubkey.exportKey().decode('ascii')
 
     winGen = tk.Tk()
     winGen.geometry("700x700")
@@ -841,7 +838,6 @@ def openGenerateKey():
         #Generate RSA key pair
         random_generator = Random.new().read
         (pubkey, privkey) = rsa.newkeys(2048)
-        #privkey, pubkey = key.exportKey().decode('ascii'), key.public_key().exportKey().decode('ascii')
 
         #Encrypt Kprivate
         for i in data:
@@ -849,29 +845,25 @@ def openGenerateKey():
                 passphrase, salt = i["passphrase"].split(':')
                 passwordSalt = os.urandom(16)
                 kSecret = pbkdf2.PBKDF2(passphrase, passwordSalt).read(32)
-                #print('AES encryption key:', binascii.hexlify(kSecrect))
                 break
 
         iv = secrets.randbits(256)
         aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
         ciphertext = aes.encrypt(str(privkey))
-        #print('Encrypted:', binascii.hexlify(ciphertext))
-        #Decrypt Kprivate
-        #aes = pyaes.AESModeOfOperationCTR(kSecret, pyaes.Counter(iv))
-        #decrypted = aes.decrypt(ciphertext)
-        # print()
-        # print('Decrypted:', decrypted)
 
-        ePriv.insert(END,binascii.hexlify(ciphertext))
+        ePub.insert(END,str(pubkey))
+        ePub.config(state=DISABLED) 
+        ePriv.insert(END,str(ciphertext))
         ePriv.config(state=DISABLED) 
-        btnBack.config(state=ACTIVE) 
+        btnGetKey.config(state=DISABLED)
+        btnBack.config(state=ACTIVE)
 
         with open('userkeys.txt') as fkin:
             dataKey = json.load(fkin)
 
         for i in dataKey:
             if (i["email"] == SIemail.get()):
-                i["kprivate"] = str(privkey)
+                i["kprivate"] = str(ciphertext)
                 i["kpublic"] = str(pubkey)
                 break
 
@@ -912,6 +904,7 @@ def openGenerateKey():
                 ePriv.insert(END,i["kprivate"])
                 ePriv.config(state=DISABLED)
                 btnGetKey.config(state=DISABLED)
+                btnBack.config(state=ACTIVE)
             break
 
     winGen.mainloop()
