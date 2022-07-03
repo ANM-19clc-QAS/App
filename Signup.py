@@ -509,6 +509,7 @@ def openSendFile():
 
 def openDecodeFile():
     winEd = tk.Tk()
+    print(2)
     winEd.geometry("700x800")
     winEd.title("Mã hóa")
 
@@ -924,8 +925,6 @@ def openConfirmPass():
 
 def openEncodeFile():
     pass
-def openDecodeFile():
-    pass
 
 # SIGN FILE
 def openSignFile():
@@ -1001,7 +1000,7 @@ def openConfirmSignFile():
     clicked_file = StringVar()
     clicked_sign = StringVar()
 
-    for i in os.listdir(path+'Sign'):
+    for i in os.listdir('Sign'):
         k = i.split('.')
         if k[-1] == 'sig':
             options_sig.insert(0,i)
@@ -1011,9 +1010,6 @@ def openConfirmSignFile():
 
     drop_file = OptionMenu(winEd,clicked_file,*options_file)
     drop_sign = OptionMenu(winEd,clicked_sign,*options_sig)
-    listbox = Listbox(winEd,fg='blue')
-    
-    listbox1 = Listbox(winEd,fg='blue')
 
     # # sign file 
     def selectFile():
@@ -1027,7 +1023,9 @@ def openConfirmSignFile():
 
     def confirm():
         for i in data_key:
+            print(i['kpublic'])
             kpublic_user_sender = rsa.PublicKey.load_pkcs1(i['kpublic'])
+            print(kpublic_user_sender)
             f = open(file).read()
             s = open(sign).read()
             try:
@@ -1064,10 +1062,6 @@ def openConfirmSignFile():
     my_lbl1 = Label(winEd,text='........')
     my_lbl1.pack(pady=5)
 
-
-    global my_lbl2
-    my_lbl2 = Label(winEd,text='........')
-    my_lbl2.pack(pady=5)
 
     bGoSignup = Button(winEd,text='BACK',command=combine_funcs(winEd.destroy,openMenu))
     bGoSignup.place(x=20,y=10)
